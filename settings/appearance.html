@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appearance</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <a class="back" href="settings.html" aria-label="Back">‹</a>
+      <div>
+        <div class="title">Appearance</div>
+        <div class="subtitle">Theme, accent, blur</div>
+      </div>
+    </header>
+
+    <main class="content" aria-label="Appearance settings">
+      <section class="section">
+        <div class="section-title">Theme</div>
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Mode</div>
+              <div class="row-sub">System / Light / Dark</div>
+            </div>
+            <div class="row-right">
+              <div class="segmented" role="group" aria-label="Theme">
+                <button class="seg-btn" type="button" data-theme="system">System</button>
+                <button class="seg-btn" type="button" data-theme="light">Light</button>
+                <button class="seg-btn" type="button" data-theme="dark">Dark</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Accent</div>
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Accent Color</div>
+              <div class="row-sub">Used for focus and highlights</div>
+            </div>
+            <div class="row-right">
+              <div class="dots" role="group" aria-label="Accent color">
+                <button class="dot" type="button" data-color="#0A84FF" aria-label="Blue"></button>
+                <button class="dot" type="button" data-color="#30D158" aria-label="Green"></button>
+                <button class="dot" type="button" data-color="#FFD60A" aria-label="Yellow"></button>
+                <button class="dot" type="button" data-color="#FF375F" aria-label="Pink"></button>
+                <button class="dot" type="button" data-color="#BF5AF2" aria-label="Purple"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Glass</div>
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Blur Intensity</div>
+              <div class="row-sub">Subtle range recommended</div>
+            </div>
+            <div class="row-right">
+              <input id="blurIntensity" name="blurIntensity" class="range" type="range" min="6" max="24" step="1" aria-label="Blur intensity" />
+              <div id="blurValue" class="pill" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Reduce Motion</div>
+              <div class="row-sub">Disables most animations</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Reduce motion">
+                <input id="reduceMotion" name="reduceMotion" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note" id="status" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../settingsStore.js"></script>
+  <script src="appearance.js"></script>
+</body>
+</html>

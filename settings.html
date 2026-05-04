@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - iOS Glass Tab</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-container">
+    
+    <header class="settings-header">
+      <h1>⚙️ Settings</h1>
+      <p>Customize your iOS Glass Tab experience</p>
+    </header>
+    
+    <div class="settings-content">
+      
+      <!-- Theme Section -->
+      <section class="setting-section">
+        <h2>🌗 Appearance</h2>
+        <div class="setting-item">
+          <label for="themeSelect">Theme</label>
+          <select id="themeSelect" class="setting-select">
+            <option value="auto">Auto (System)</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+      </section>
+      
+      <!-- Wallpaper Section -->
+      <section class="setting-section">
+        <h2>🖼️ Wallpaper</h2>
+        <div class="setting-item">
+          <label for="wallpaperSelect">Background Style</label>
+          <select id="wallpaperSelect" class="setting-select">
+            <option value="gradient1">Deep Night (Default)</option>
+            <option value="gradient2">Midnight Blue</option>
+            <option value="gradient3">Purple Dusk</option>
+            <option value="gradient4">Forest Night</option>
+          </select>
+        </div>
+      </section>
+      
+      <!-- Shortcuts Section -->
+      <section class="setting-section">
+        <h2>🔗 Shortcuts</h2>
+        <p class="setting-description">Manage your quick access links</p>
+        <div id="shortcutsList" class="shortcuts-list">
+          <!-- Dynamically populated -->
+        </div>
+        <button id="resetShortcuts" class="btn-secondary">Reset to Defaults</button>
+      </section>
+      
+    </div>
+    
+    <footer class="settings-footer">
+      <button id="saveSettings" class="btn-primary">Save Changes</button>
+      <p class="save-status" id="saveStatus"></p>
+    </footer>
+    
+  </div>
+  
+  <script src="settings.js"></script>
+</body>
+</html>

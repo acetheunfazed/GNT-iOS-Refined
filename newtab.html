@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Prevent back-forward cache to avoid memory buildup -->
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>New Tab</title>
+  <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon-16.png">
+  <link rel="apple-touch-icon" sizes="128x128" href="assets/icons/icon-128.png">
+  <link rel="stylesheet" href="newtab.css">
+  <script src="early-theme.js"></script>
+</head>
+
+<body>
+  <!-- Welcome Overlay (First Install) -->
+  <div class="welcome-overlay" id="welcomeOverlay" style="display:none">
+    <div class="welcome-gradient-bg"></div>
+    <div class="welcome-glass-card">
+      <div class="welcome-icon">
+        <img src="assets/icons/icon-128.png" alt="GNT" draggable="false">
+      </div>
+      <h1 class="welcome-title">
+        <span class="welcome-word" style="--i:0">GNT:</span>
+        <span class="welcome-word" style="--i:1">Glass</span>
+        <span class="welcome-word" style="--i:2">New</span>
+        <span class="welcome-word" style="--i:3">Tab</span>
+      </h1>
+      <p class="welcome-tagline">Your beautiful new tab experience</p>
+      <button class="welcome-btn" id="welcomeStartBtn" type="button">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Footer Tip (First Run) -->
+  <div class="footer-tip" id="footerTip" style="display:none" role="dialog" aria-label="Tip">
+    <div class="footer-tip-card">
+      <div class="footer-tip-progress" aria-hidden="true">
+        <div class="footer-tip-progress-bar" id="footerTipProgressBar"></div>
+      </div>
+
+      <div class="footer-tip-content">
+        <div class="footer-tip-title">Seeing a banner at the bottom?</div>
+        <div class="footer-tip-text">To hide it, right-click it and select 'Hide Footer on New Tab Page'.</div>
+      </div>
+
+      <button class="footer-tip-btn" id="footerTipGotItBtn" type="button">Got it</button>
+    </div>
+  </div>
+
+  <!-- Animated Background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-blur-orb orb-1"></div>
+  <div class="bg-blur-orb orb-2"></div>
+  <div class="bg-blur-orb orb-3"></div>
+  <div class="wallpaper background-layer" id="wallpaper"></div>
+
+  <!-- Settings Button -->
+  <button class="settings-btn" id="settingsBtn" type="button" title="Settings" aria-label="Settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="12" cy="12" r="3" />
+      <path
+        d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+    </svg>
+  </button>
+
+  <!-- ToDo Widget - Simple Clean Style -->
+  <div class="todo-widget" id="todoWidget" role="button" tabindex="0" aria-label="Open todo list">
+    <div class="todo-icon-box">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      </svg>
+    </div>
+    <span class="todo-widget-label">To-do List</span>
+  </div>
+
+  <!-- Sticky Notes (Collapsed button + Expandable panel) -->
+  <button class="sticky-notes-fab" id="stickyNotesBtn" type="button" title="Sticky Notes" aria-label="Sticky Notes">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round" aria-hidden="true">
+      <path d="M16 4H8a2 2 0 0 0-2 2v14l4-2 4 2 4-2 4 2V6a2 2 0 0 0-2-2h-4" />
+      <path d="M9 3h6" />
+      <path d="M9 9h10" />
+      <path d="M9 13h10" />
+    </svg>
+  </button>
+
+  <div class="sticky-notes-overlay" id="stickyNotesOverlay"></div>
+  <section class="sticky-notes" id="stickyNotes" aria-label="Sticky Notes" aria-hidden="true">
+    <header class="sticky-notes-header">
+      <h2 class="sticky-notes-title">🗒️ Sticky Notes</h2>
+      <div class="sticky-notes-actions">
+        <button class="sticky-notes-icon-btn" id="clearStickyNotes" type="button" title="Clear"
+          aria-label="Clear notes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6" />
+            <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+          </svg>
+        </button>
+        <button class="sticky-notes-icon-btn" id="closeStickyNotes" type="button" title="Close"
+          aria-label="Close sticky notes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </header>
+    <textarea class="sticky-notes-text" id="stickyNotesText"
+      placeholder="Write quick notes (passwords, keywords, reminders)…" autocapitalize="off" autocomplete="off"
+      spellcheck="false" maxlength="4000"></textarea>
+    <div class="sticky-notes-hint">Saved automatically on this device.</div>
+  </section>
+
+  <!-- AI Tools - Bottom Left Radial Menu -->
+  <div class="ai-tools" id="aiTools">
+    <button class="ai-tools-widget" id="aiToolsBtn" type="button" title="AI Tools" aria-label="AI Tools">
+      <div class="ai-tools-icon-box" aria-hidden="true">
+        <img src="assets/icons/icon-128.png"
+          srcset="assets/icons/icon-32.png 32w, assets/icons/icon-48.png 48w, assets/icons/icon-128.png 128w"
+          sizes="44px" alt="" draggable="false" width="44" height="44">
+      </div>
+      <span class="ai-tools-label">AI Tools</span>
+    </button>
+
+    <div class="ai-tools-menu" id="aiToolsMenu" aria-hidden="true">
+      <a class="ai-tool-item" href="https://chat.openai.com/" title="ChatGPT" aria-label="ChatGPT">
+        <img class="ai-tool-icon" alt="ChatGPT">
+      </a>
+      <a class="ai-tool-item" href="https://gemini.google.com/" title="Gemini" aria-label="Gemini">
+        <img class="ai-tool-icon" alt="Gemini">
+      </a>
+      <a class="ai-tool-item" href="https://claude.ai/" title="Claude" aria-label="Claude">
+        <img class="ai-tool-icon" alt="Claude">
+      </a>
+      <a class="ai-tool-item" href="https://www.perplexity.ai/" title="Perplexity" aria-label="Perplexity">
+        <img class="ai-tool-icon" alt="Perplexity">
+      </a>
+      <a class="ai-tool-item" href="https://copilot.microsoft.com/" title="Copilot" aria-label="Copilot">
+        <img class="ai-tool-icon" alt="Copilot">
+      </a>
+      <a class="ai-tool-item" href="https://www.midjourney.com/" title="Midjourney" aria-label="Midjourney">
+        <img class="ai-tool-icon" alt="Midjourney">
+      </a>
+    </div>
+  </div>
+
+  <!-- ToDo Modal -->
+  <div class="modal-overlay" id="todoOverlay"></div>
+  <div class="todo-modal glass-card" id="todoModal">
+    <div class="modal-header">
+      <h2>📝 To-do List</h2>
+      <button class="modal-close" id="closeTodoModal" aria-label="Close todo list">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="todo-input-wrapper">
+      <input type="text" id="todoInput" name="todoInput" placeholder="Add a new task..." autocomplete="off"
+        maxlength="80">
+      <button class="todo-submit-btn" id="todoSubmitBtn" aria-label="Add task">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+    </div>
+    <div class="todo-input-hint" id="todoInputHint" aria-live="polite"></div>
+    <ul class="todo-list" id="todoList"></ul>
+  </div>
+
+  <!-- Rate Prompt Modal (Two-Step Flow for Better Reviews) -->
+  <div class="modal-overlay" id="rateOverlay"></div>
+  <div class="rate-modal glass-card" id="rateModal" role="dialog" aria-modal="true" aria-labelledby="rateTitle"
+    aria-describedby="rateDesc">
+    <div class="modal-header">
+      <h2 id="rateTitle">Enjoying your glass dashboard?</h2>
+      <button class="modal-close" id="closeRateModal" aria-label="Close rate prompt" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Step 1: Satisfaction Check -->
+    <div class="rate-step" id="rateStep1" data-step="1">
+      <div class="rate-body">
+        <p id="rateDesc" class="rate-text">How's your experience?</p>
+      </div>
+      <div class="satisfaction-actions">
+        <button class="satisfaction-btn love" id="satisfactionLove" type="button" title="Love it">
+          <span class="satisfaction-emoji">⭐</span>
+          <span class="satisfaction-label">Love it</span>
+        </button>
+        <button class="satisfaction-btn okay" id="satisfactionOkay" type="button" title="It's okay">
+          <span class="satisfaction-emoji">😐</span>
+          <span class="satisfaction-label">It's okay</span>
+        </button>
+        <button class="satisfaction-btn needswork" id="satisfactionNeedsWork" type="button" title="Needs work">
+          <span class="satisfaction-emoji">😕</span>
+          <span class="satisfaction-label">Needs work</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Review Prompt (shown only if "Love it" selected) -->
+    <div class="rate-step hidden" id="rateStep2" data-step="2">
+      <div class="rate-body">
+        <p class="rate-intro">Tell us what you love — design, features, or performance.</p>
+        <p class="rate-subtext">Your detailed review helps us improve and build more features for you.</p>
+
+        <div class="review-guidance">
+          <p class="guidance-heading">What do you like most?</p>
+          <ul class="guidance-list">
+            <li>🎨 UI design</li>
+            <li>⚡ Speed</li>
+            <li>🎛️ Customization</li>
+            <li>✨ Features</li>
+          </ul>
+        </div>
+
+        <div class="micro-reward">
+          <p>✨ Top reviewers get early access to new features 🚀</p>
+        </div>
+      </div>
+      <div class="rate-actions">
+        <button class="rate-btn secondary" id="rateLaterBtn" type="button">Remind me later</button>
+        <button class="rate-btn primary cta-glow" id="rateNowBtn" type="button">Write a Review</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Redirect Loading State -->
+    <div class="rate-step hidden" id="rateStep4" data-step="loading">
+      <div class="rate-body">
+        <div class="loading-message">
+          <p class="loading-text">Opening review page...</p>
+          <p class="loading-tip">Quick tip: Mention what you like most — it really helps!</p>
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Support Prompt Modal (Every 200 Visits) -->
+  <div class="modal-overlay" id="supportOverlay"></div>
+  <div class="rate-modal glass-card" id="supportModal" role="dialog" aria-modal="true" aria-labelledby="supportTitle"
+    aria-describedby="supportDesc">
+    <div class="modal-header">
+      <h2 id="supportTitle">☕ Support GNT (optional)</h2>
+      <button class="modal-close" id="closeSupportModal" aria-label="Close support prompt" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="rate-body">
+      <p id="supportDesc" class="rate-text">If you like the glass New Tab experience, you can buy me a coffee to support
+        development. Totally optional.</p>
+    </div>
+    <div class="rate-actions">
+      <button class="rate-btn secondary" id="supportLaterBtn" type="button">Not now</button>
+      <button class="rate-btn primary" id="supportNowBtn" type="button">Give now</button>
+    </div>
+  </div>
+
+  <!-- Feedback Prompt Modal (Every 160 Visits) -->
+  <div class="modal-overlay" id="feedbackOverlay"></div>
+  <div class="rate-modal glass-card" id="feedbackModal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle"
+    aria-describedby="feedbackDesc">
+    <div class="modal-header">
+      <h2 id="feedbackTitle">💬 Suggest a feature</h2>
+      <button class="modal-close" id="closeFeedbackModal" aria-label="Close feedback prompt" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="rate-body">
+      <p id="feedbackDesc" class="rate-text">Tell us what feature you want next. Your feedback helps us build what
+        matters most to you.</p>
+    </div>
+    <div class="rate-actions">
+      <button class="rate-btn secondary" id="feedbackLaterBtn" type="button">Maybe later</button>
+      <button class="rate-btn primary" id="feedbackNowBtn" type="button">Open Feedback Form</button>
+    </div>
+  </div>
+
+  <!-- Main Content - Full Screen Layout -->
+  <main class="main-content">
+    <!-- Left Section - Clock & Greeting -->
+    <section class="left-section">
+      <div class="clock-container">
+        <div class="clock-face">
+          <span class="hour-num h12">12</span>
+          <span class="hour-num h1">1</span>
+          <span class="hour-num h2">2</span>
+          <span class="hour-num h3">3</span>
+          <span class="hour-num h4">4</span>
+          <span class="hour-num h5">5</span>
+          <span class="hour-num h6">6</span>
+          <span class="hour-num h7">7</span>
+          <span class="hour-num h8">8</span>
+          <span class="hour-num h9">9</span>
+          <span class="hour-num h10">10</span>
+          <span class="hour-num h11">11</span>
+          <div class="hand hour-hand" id="hourHand"></div>
+          <div class="hand minute-hand" id="minuteHand"></div>
+          <div class="hand second-hand" id="secondHand"></div>
+          <div class="center-dot"></div>
+        </div>
+      </div>
+
+      <div class="greeting-container">
+        <h1 class="greeting-text" id="greetingText">Good Morning</h1>
+        <div class="user-name" id="userName" title="Click to edit name">User</div>
+        <p class="date-text" id="dateText">Friday, December 26</p>
+      </div>
+    </section>
+
+    <!-- Right Section - Weather & Search -->
+    <section class="right-section">
+      <div class="weather-card glass-card" id="weatherCard">
+        <div class="weather-main">
+          <div class="weather-icon" id="weatherIcon">☀️</div>
+          <div class="weather-temp">
+            <span class="temp-value" id="tempValue">21</span>
+            <span class="temp-unit">°</span>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-condition" id="weatherCondition">Partly Cloudy</div>
+          <div class="weather-location" id="weatherLocationText">Locating...</div>
+          <div class="weather-extra">
+            <span id="weatherHumidity">💧 45%</span>
+            <span id="weatherFeels">🌡️ 20°</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-card glass-card">
+        <div class="search-input-wrapper">
+          <div class="search-engine-selector" id="searchEngines">
+            <button class="engine-picker-btn" id="enginePickerBtn" type="button" aria-haspopup="menu"
+              aria-expanded="false" title="Search engine">
+              <img class="engine-picker-logo" id="enginePickerLogo"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5FD' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7.5'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E"
+                alt="Default" draggable="false" referrerpolicy="no-referrer">
+            </button>
+
+            <div class="search-engines-menu" id="searchEnginesMenu" role="menu" aria-label="Search engines" hidden>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="default">
+                <img class="search-engine-logo"
+                  src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5FD' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7.5'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E"
+                  alt="Default" draggable="false" referrerpolicy="no-referrer">
+                <span class="search-engine-label">Default</span>
+              </button>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="google">
+                <img class="search-engine-logo" src="https://www.google.com/favicon.ico" alt="Google" draggable="false"
+                  referrerpolicy="no-referrer">
+                <span class="search-engine-label">Google</span>
+              </button>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="duckduckgo">
+                <img class="search-engine-logo" src="https://duckduckgo.com/favicon.ico" alt="DuckDuckGo"
+                  draggable="false" referrerpolicy="no-referrer">
+                <span class="search-engine-label">Duck</span>
+              </button>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="bing">
+                <img class="search-engine-logo" src="https://www.bing.com/sa/simg/favicon-2x.ico" alt="Bing"
+                  draggable="false" referrerpolicy="no-referrer">
+                <span class="search-engine-label">Bing</span>
+              </button>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="brave">
+                <img class="search-engine-logo" src="https://brave.com/favicon.ico" alt="Brave" draggable="false"
+                  referrerpolicy="no-referrer">
+                <span class="search-engine-label">Brave</span>
+              </button>
+              <button class="search-engine-item" type="button" role="menuitem" data-engine="youtube">
+                <img class="search-engine-logo" src="https://www.youtube.com/favicon.ico" alt="YouTube"
+                  draggable="false" referrerpolicy="no-referrer">
+                <span class="search-engine-label">YouTube</span>
+              </button>
+            </div>
+          </div>
+          <input type="text" id="searchInput" name="searchInput" placeholder="Search the web..." autocomplete="off"
+            maxlength="2000">
+          <button class="mic-btn" id="micBtn" title="Voice Search" aria-label="Voice search">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+              <path
+                d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+            </svg>
+          </button>
+        </div>
+        <!-- Motivational Quote -->
+        <div class="quote-container" id="quoteContainer" style="display: none;">
+          <p class="quote-text" id="quoteText"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- App Dock -->
+  <div class="dock-container dock-preload">
+    <div class="dock glass-card" id="appDock">
+      <button class="show-all-apps" id="showAllApps" type="button" title="All Apps" aria-label="Show all apps">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="6" cy="6" r="2" />
+          <circle cx="12" cy="6" r="2" />
+          <circle cx="18" cy="6" r="2" />
+          <circle cx="6" cy="12" r="2" />
+          <circle cx="12" cy="12" r="2" />
+          <circle cx="18" cy="12" r="2" />
+          <circle cx="6" cy="18" r="2" />
+          <circle cx="12" cy="18" r="2" />
+          <circle cx="18" cy="18" r="2" />
+        </svg>
+      </button>
+      <div class="dock-divider"></div>
+      <!-- Apps will be added here by JS -->
+    </div>
+  </div>
+
+  <!-- All Apps Modal -->
+  <div class="modal-overlay" id="appsOverlay"></div>
+  <div class="apps-modal glass-card" id="appsModal">
+    <div class="modal-header">
+      <h2>All Apps</h2>
+      <button class="modal-close" id="closeAppsModal" aria-label="Close apps">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <!-- iOS 26 Style Search Bar -->
+    <div class="apps-search-wrapper">
+      <div class="apps-search-bar">
+        <svg class="apps-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="M21 21l-4.35-4.35" />
+        </svg>
+        <input type="text" id="appsSearchInput" name="appsSearchInput" placeholder="Search apps..." autocomplete="off"
+          maxlength="100">
+        <button class="apps-search-clear" id="appsClearSearch" aria-label="Clear search" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.2)" />
+            <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" fill="none" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="apps-grid" id="appsGrid"></div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="modal-overlay" id="settingsOverlay"></div>
+  <aside class="settings-panel" id="settingsPanel">
+    <header class="settings-header">
+      <h2>⚙️ Settings</h2>
+      <button class="modal-close" id="closeSettings" aria-label="Close settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="settings-content">
+      <!-- Clock Section -->
+      <div class="settings-section">
+        <h3>🕐 Clock & Time</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Hide Clock</span>
+            <span class="setting-desc">Hide the clock and date</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleHideClock" name="toggleHideClock">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Digital Clock</span>
+            <span class="setting-desc">Switch to digital clock display</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleDigitalClock" name="toggleDigitalClock">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item" id="setting12Hour" style="display:none">
+          <div class="setting-info">
+            <span class="setting-title">12-Hour Format</span>
+            <span class="setting-desc">Use 12-hour time format</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle12Hour" name="toggle12Hour">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item" id="settingSeconds" style="display:none">
+          <div class="setting-info">
+            <span class="setting-title">Show Seconds</span>
+            <span class="setting-desc">Display seconds on digital clock</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleSeconds" name="toggleSeconds" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Greeting Section -->
+      <div class="settings-section">
+        <h3>👋 Greeting</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Greeting</span>
+            <span class="setting-desc">Display greeting message</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleGreeting" name="toggleGreeting" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Customizable Text</span>
+            <span class="setting-desc">Show custom name below clock</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleCustomText" name="toggleCustomText" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item column">
+          <label class="setting-title" for="settingsName">Your Name</label>
+          <input type="text" id="settingsName" name="settingsName" class="setting-input" placeholder="Enter your name"
+            maxlength="22">
+        </div>
+      </div>
+
+      <!-- Search Section -->
+      <div class="settings-section">
+        <h3>🔍 Search</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Hide Microphone</span>
+            <span class="setting-desc">If voice typing is not working</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleHideMic" name="toggleHideMic">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Motivational Quotes</span>
+            <span class="setting-desc">Show quotes below search bar</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleQuotes" name="toggleQuotes" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item column">
+          <label class="setting-title" for="voiceLanguageSelect">Voice English Accent</label>
+          <span class="setting-desc">Choose the English language variant for microphone recognition</span>
+          <select id="voiceLanguageSelect" name="voiceLanguageSelect" class="setting-select">
+            <option value="auto">Auto (Browser English)</option>
+            <option value="en-US">English (United States)</option>
+            <option value="en-GB">English (United Kingdom)</option>
+            <option value="en-IN">English (India)</option>
+            <option value="en-AU">English (Australia)</option>
+            <option value="en-CA">English (Canada)</option>
+            <option value="en-NZ">English (New Zealand)</option>
+            <option value="en-IE">English (Ireland)</option>
+            <option value="en-ZA">English (South Africa)</option>
+            <option value="en-SG">English (Singapore)</option>
+            <option value="en-PH">English (Philippines)</option>
+            <option value="en-HK">English (Hong Kong)</option>
+            <option value="en-NG">English (Nigeria)</option>
+            <option value="en-KE">English (Kenya)</option>
+            <option value="en-TZ">English (Tanzania)</option>
+            <option value="en-PK">English (Pakistan)</option>
+            <option value="en-GH">English (Ghana)</option>
+            <option value="en-AE">English (United Arab Emirates)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Weather Section -->
+      <div class="settings-section">
+        <h3>🌤️ Weather</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Weather</span>
+            <span class="setting-desc">Display weather widget</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleWeather" name="toggleWeather" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Fahrenheit</span>
+            <span class="setting-desc">Use Fahrenheit instead of Celsius</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleFahrenheit" name="toggleFahrenheit">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item column">
+          <label class="setting-title" for="weatherLocation">Enter your Location</label>
+          <span class="setting-desc">If the weather location isn't correct</span>
+          <div class="input-with-btn">
+            <input type="text" id="weatherLocation" name="weatherLocation" class="setting-input"
+              placeholder="Your City or Coordinates (Latitude, Longitude)" maxlength="120">
+            <button class="save-input-btn" id="saveLocation" aria-label="Save location">Save</button>
+          </div>
+          <a class="help-link" href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy policy</a>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Use GPS</span>
+            <span class="setting-desc">Enable GPS for live location updates</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleUseGPS" name="toggleUseGPS">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item column">
+          <label class="setting-title" for="weatherApiKey">Enter your WeatherAPI key</label>
+          <span class="setting-desc">If the weather functionality isn't working</span>
+          <div class="input-with-btn">
+            <input type="password" id="weatherApiKey" name="weatherApiKey" class="setting-input"
+              placeholder="Your WeatherAPI key" maxlength="80">
+            <button class="save-input-btn" id="saveApiKey" aria-label="Save API key">Save</button>
+          </div>
+          <a class="help-link" href="https://www.weatherapi.com/signup.aspx" target="_blank"
+            rel="noopener noreferrer">Create your own API key</a>
+        </div>
+      </div>
+
+      <!-- Apps Section -->
+      <div class="settings-section">
+        <h3>📱 Apps & Dock</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show To-do List</span>
+            <span class="setting-desc">Checked items are auto-deleted next day</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleTodoWidget" name="toggleTodoWidget" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Google Apps</span>
+            <span class="setting-desc">Display dock with Google apps</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleGoogleApps" name="toggleGoogleApps" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Adaptive Icons</span>
+            <span class="setting-desc">Icons adapt to theme color</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleAdaptiveIcons" name="toggleAdaptiveIcons">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Position On Screen</span>
+          </div>
+          <select class="setting-select" id="dockPosition">
+            <option value="bottom">Bottom ↓</option>
+            <option value="top">Top ↑</option>
+            <option value="left">Left ←</option>
+            <option value="right">Right →</option>
+          </select>
+        </div>
+
+        <!-- Custom Dock Apps -->
+        <div class="setting-subsection">
+          <div class="subsection-header">
+            <span class="setting-title">Custom Dock Apps</span>
+            <button class="add-dock-btn" id="addDockApp" aria-label="Add dock app">Add</button>
+          </div>
+          <div class="dock-apps-list" id="dockAppsList">
+            <!-- Dynamic dock apps will be rendered here -->
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Sticky Notes</span>
+            <span class="setting-desc">Quick notes widget on screen</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleStickyNotes" name="toggleStickyNotes">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Appearance Section -->
+      <div class="settings-section">
+        <h3>🎨 Appearance</h3>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Theme</span>
+          </div>
+          <div class="theme-selector" id="themeSelector">
+            <button class="theme-option active" data-theme="system" title="Auto">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <path d="M8 21h8M12 17v4" />
+              </svg>
+            </button>
+            <button class="theme-option" data-theme="light" title="Light">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5" />
+                <path
+                  d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+              </svg>
+            </button>
+            <button class="theme-option" data-theme="dark" title="Dark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="setting-item column">
+          <span class="setting-title">Accent Color</span>
+          <div class="color-grid" id="colorGrid">
+            <button class="color-dot" data-color="#FF3B30" style="--dot-color: #FF3B30"></button>
+            <button class="color-dot" data-color="#FF9500" style="--dot-color: #FF9500"></button>
+            <button class="color-dot" data-color="#FFCC00" style="--dot-color: #FFCC00"></button>
+            <button class="color-dot" data-color="#34C759" style="--dot-color: #34C759"></button>
+            <button class="color-dot active" data-color="#007AFF" style="--dot-color: #007AFF"></button>
+            <button class="color-dot" data-color="#5856D6" style="--dot-color: #5856D6"></button>
+            <button class="color-dot" data-color="#AF52DE" style="--dot-color: #AF52DE"></button>
+            <button class="color-dot" data-color="#FF2D55" style="--dot-color: #FF2D55"></button>
+            <button class="color-dot" data-color="#A2845E" style="--dot-color: #A2845E"></button>
+            <button class="color-dot" data-color="#8E8E93" style="--dot-color: #8E8E93"></button>
+            <button class="color-dot" data-color="#00C7BE" style="--dot-color: #00C7BE"></button>
+            <button class="color-dot" data-color="#000000" style="--dot-color: #000000"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wallpaper Section -->
+      <div class="settings-section">
+        <h3>🖼️ Wallpaper</h3>
+        <div class="wallpaper-preview" id="wallpaperPreview">
+          <span>No wallpaper set</span>
+        </div>
+        <div class="wallpaper-actions">
+          <button class="wallpaper-btn primary" id="uploadWallpaper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+            </svg>
+            Upload
+          </button>
+          <button class="wallpaper-btn" id="randomWallpaper" title="Random">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 3 21 3 21 8" />
+              <line x1="4" y1="20" x2="21" y2="3" />
+              <polyline points="21 16 21 21 16 21" />
+              <line x1="15" y1="15" x2="21" y2="21" />
+              <line x1="4" y1="4" x2="9" y2="9" />
+            </svg>
+          </button>
+          <button class="wallpaper-btn danger" id="clearWallpaper" title="Remove">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Section -->
+      <div class="settings-section">
+        <h3>💾 Data</h3>
+        <div class="data-actions">
+          <button class="data-btn" id="backupSettings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+              <polyline points="17 21 17 13 7 13 7 21" />
+              <polyline points="7 3 7 8 15 8" />
+            </svg>
+            Backup
+          </button>
+          <button class="data-btn" id="restoreSettings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+            </svg>
+            Restore
+          </button>
+        </div>
+        <button class="reset-btn" id="resetSettings" aria-label="Reset all settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+          </svg>
+          Reset All Settings
+        </button>
+      </div>
+
+      <!-- About & Developer Section -->
+      <div class="settings-section about-section">
+        <div class="about-header">
+          <div class="app-icon-large">
+            <img src="assets/icons/icon-128.png" alt="GNT: Glass New Tab – iOS Style Dashboard" draggable="false">
+          </div>
+          <div class="app-info">
+            <h2 class="app-name">GNT: Glass New Tab – iOS Style Dashboard</h2>
+            <span class="app-version">Version 3.0.0</span>
+          </div>
+        </div>
+
+        <div class="welcome-message">
+          <div class="about-welcome-title">
+            <span class="about-welcome-emoji" aria-hidden="true">✨</span>
+            <span class="about-welcome-text">Welcome to GNT: Glass New Tab – iOS Style Dashboard!</span>
+          </div>
+          <p>Thank you for choosing our extension. We've crafted this beautiful, iOS-inspired new tab experience with
+            love and attention to detail. Enjoy the smooth glass effects, powerful customization, and seamless
+            productivity features.</p>
+        </div>
+
+        <div class="developer-info">
+          <h3>👨‍💻 Developer</h3>
+          <div class="developer-card">
+            <div class="developer-avatar">AP</div>
+            <div class="developer-details">
+              <span class="developer-name">Animesh Patra</span>
+              <span class="developer-role">Software Development Engineer</span>
+            </div>
+          </div>
+
+          <div class="developer-links">
+            <a href="https://www.linkedin.com/in/animesh-patra2004" target="_blank" rel="noopener noreferrer"
+              class="developer-link linkedin">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+              LinkedIn Profile
+            </a>
+            <a href="https://animeshpatra.me" target="_blank" rel="noopener noreferrer" class="developer-link email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20" />
+                <path d="M12 2a15.3 15.3 0 0 1 0 20" />
+                <path d="M12 2a15.3 15.3 0 0 0 0 20" />
+              </svg>
+              Connect with Developer
+            </a>
+          </div>
+
+          <div class="support-links-row" aria-label="Support links">
+            <a class="coffee-support-link" href="https://rzp.io/rzp/IwI9196l" target="_blank"
+              rel="noopener noreferrer">☕ Buy me a coffee (optional)</a>
+            <a class="coffee-support-link"
+              href="https://chromewebstore.google.com/detail/pdjebhcifgoembcidgjhdjohnkgcbflb?utm_source=item-share-cb"
+              target="_blank" rel="noopener noreferrer">⭐ Rate GNT</a>
+          </div>
+        </div>
+
+        <div class="made-with-love">
+          <span>Made with</span>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="#FF3B30">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
+          <span>by <a class="made-with-love-link" href="https://animeshpatra.me" target="_blank"
+              rel="noopener noreferrer">Animesh</a> in <strong>India</strong></span>
+        </div>
+      </div>
+
+      <div class="settings-footer">
+        <p>GNT: Glass New Tab – iOS Style Dashboard v3.0.0 • © 2026 Animesh Patra</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Name Edit Modal -->
+  <div class="modal-overlay" id="nameOverlay"></div>
+  <div class="name-modal glass-card" id="nameModal">
+    <div class="modal-header">
+      <h2>Edit Name</h2>
+      <button class="modal-close" id="closeNameModal" type="button" aria-label="Close name editor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="name-modal-content">
+      <input type="text" id="nameInput" name="nameInput" class="name-input" placeholder="Enter your name..."
+        maxlength="22">
+      <button class="save-btn" id="saveNameBtn" type="button" aria-label="Save name">Save</button>
+    </div>
+  </div>
+
+  <input type="file" id="wallpaperInput" name="wallpaperInput" accept="image/*" hidden>
+  <input type="file" id="restoreInput" name="restoreInput" accept=".json" hidden>
+  <input type="file" id="dockIconInput" name="dockIconInput" accept="image/*" hidden>
+
+  <script src="newtab.js"></script>
+</body>
+
+</html>

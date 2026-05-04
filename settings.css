@@ -1,0 +1,333 @@
+/* ========================================
+   SETTINGS PAGE STYLES
+   ======================================== */
+
+:root {
+  --settings-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --settings-container-bg: rgba(255, 255, 255, 0.15);
+  --settings-text: #fff;
+  --settings-text-secondary: rgba(255, 255, 255, 0.7);
+  --settings-icon-color: #fff;
+  --settings-border: rgba(255, 255, 255, 0.2);
+  --settings-select-bg: rgba(255, 255, 255, 0.15);
+  --settings-select-hover: rgba(255, 255, 255, 0.2);
+  --glass-blur: 52px;
+  --glass-saturate: 180%;
+  --glass-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  --motion-smooth: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-theme="light"] {
+  --settings-bg: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  --settings-container-bg: rgba(255, 255, 255, 0.72);
+  --settings-text: #1c1c1e;
+  --settings-text-secondary: rgba(0, 0, 0, 0.6);
+  --settings-icon-color: #1c1c1e;
+  --settings-border: rgba(0, 0, 0, 0.12);
+  --settings-select-bg: rgba(0, 0, 0, 0.05);
+  --settings-select-hover: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 20px 48px rgba(0, 0, 0, 0.14);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--settings-bg);
+  min-height: 100vh;
+  padding: 40px 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.settings-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--settings-container-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--settings-border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  will-change: transform;
+  transform: translateZ(0);
+  contain: paint layout;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+.settings-header {
+  padding: 40px 40px 32px;
+  text-align: center;
+  border-bottom: 1px solid var(--settings-border);
+}
+
+.settings-header h1 {
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--settings-text);
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.settings-header p {
+  font-size: 16px;
+  color: var(--settings-text-secondary);
+  font-weight: 400;
+}
+
+/* ========================================
+   CONTENT
+   ======================================== */
+
+.settings-content {
+  padding: 32px 40px;
+  contain: layout style paint;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+}
+
+.setting-section {
+  margin-bottom: 40px;
+}
+
+.setting-section h2 {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--settings-text);
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+
+.setting-description {
+  font-size: 14px;
+  color: var(--settings-text-secondary);
+  margin-bottom: 16px;
+}
+
+/* ========================================
+   SETTING ITEM
+   ======================================== */
+
+.setting-item {
+  margin-bottom: 20px;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--settings-text);
+  margin-bottom: 8px;
+}
+
+.setting-select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--settings-select-bg);
+  border: 1px solid var(--settings-border);
+  border-radius: 12px;
+  color: var(--settings-text);
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-smooth), border-color var(--motion-smooth);
+  will-change: background-color, border-color;
+}
+
+.setting-select:hover {
+  background: var(--settings-select-hover);
+}
+
+.setting-select:focus {
+  outline: none;
+  background: var(--settings-select-hover);
+  border-color: var(--settings-text);
+}
+
+.setting-select option {
+  background: #667eea;
+  color: #fff;
+}
+
+[data-theme="light"] .setting-select option {
+  background: #f5f7fa;
+  color: #1c1c1e;
+}
+
+/* ========================================
+   SHORTCUTS LIST
+   ======================================== */
+
+.shortcuts-list {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .shortcuts-list {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.shortcut-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  color: var(--settings-text);
+  transition: background-color var(--motion-smooth);
+  will-change: background-color;
+  transform: translateZ(0);
+}
+
+[data-theme="light"] .shortcut-item {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.shortcut-item:last-child {
+  margin-bottom: 0;
+}
+
+.shortcut-item-icon {
+  font-size: 24px;
+  color: var(--settings-icon-color);
+}
+
+.shortcut-item-info {
+  flex: 1;
+}
+
+.shortcut-item-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  color: var(--settings-text);
+}
+
+.shortcut-item-url {
+  font-size: 12px;
+  color: var(--settings-text-secondary);
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-smooth), transform var(--motion-smooth), box-shadow var(--motion-smooth);
+  will-change: background-color, transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-primary {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--settings-text);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  will-change: background-color, transform;
+}
+
+[data-theme="light"] .btn-primary {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--settings-text);
+}
+
+.btn-primary:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translate3d(0, -2px, 0);
+}
+
+[data-theme="light"] .btn-primary:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: translate3d(0, 0px, 0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--settings-text);
+  border: 1px solid var(--settings-border);
+}
+
+[data-theme="light"] .btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--settings-text);
+  border: 1px solid var(--settings-border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.btn-secondary:active {
+  transform: translate3d(0, 0px, 0);
+}
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+.settings-footer {
+  padding: 24px 40px 40px;
+  text-align: center;
+  border-top: 1px solid var(--settings-border);
+}
+
+.save-status {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--settings-text-secondary);
+  min-height: 20px;
+}
+
+.save-status.success {
+  color: #7fff7f;
+}
+
+.save-status.error {
+  color: #ff7f7f;
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}

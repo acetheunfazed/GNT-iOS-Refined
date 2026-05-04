@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div class="title">Settings</div>
+      <div class="subtitle">iOS Glass Tab</div>
+    </header>
+
+    <main class="content" aria-label="Settings">
+      <section class="section" aria-label="Shortcuts">
+        <div class="section-title">Shortcuts</div>
+
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Show Shortcuts</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Show shortcuts">
+                <input id="showShortcuts" name="showShortcuts" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <a class="row nav" href="shortcuts.html" aria-label="Open shortcuts settings">
+            <div class="row-left">
+              <div class="row-label">Shortcuts</div>
+              <div class="row-sub">Customize icons and behavior</div>
+            </div>
+            <div class="row-right">
+              <span class="chevron" aria-hidden="true">›</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Search">
+        <div class="section-title">Search</div>
+
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Spotlight Search</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Enable Spotlight search">
+                <input id="enableSpotlightSearch" name="enableSpotlightSearch" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <a class="row nav" href="search.html" aria-label="Open search settings">
+            <div class="row-left">
+              <div class="row-label">Search</div>
+              <div class="row-sub">Engine and suggestions</div>
+            </div>
+            <div class="row-right">
+              <span class="chevron" aria-hidden="true">›</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Appearance">
+        <div class="section-title">Appearance</div>
+
+        <div class="group">
+          <a class="row nav" href="appearance.html" aria-label="Open appearance settings">
+            <div class="row-left">
+              <div class="row-label">Appearance</div>
+              <div class="row-sub">Theme, accent, blur, motion</div>
+            </div>
+            <div class="row-right">
+              <span class="chevron" aria-hidden="true">›</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Layout">
+        <div class="section-title">Layout</div>
+
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Show Dock</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Show dock">
+                <input id="showDock" name="showDock" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Show Bookmarks</div>
+              <div class="row-sub">Displays bookmark bar items</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Show bookmarks">
+                <input id="showBookmarks" name="showBookmarks" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-label="Advanced">
+        <div class="section-title">Advanced</div>
+
+        <div class="group">
+          <div class="row">
+            <div class="row-left">
+              <div class="row-label">Reduce Motion</div>
+              <div class="row-sub">Disables most animations</div>
+            </div>
+            <div class="row-right">
+              <label class="switch" aria-label="Reduce motion">
+                <input id="reduceMotion" name="reduceMotion" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <button class="row button" id="resetSettings" type="button" aria-label="Reset all settings">
+            <div class="row-left">
+              <div class="row-label danger">Reset All Settings</div>
+              <div class="row-sub">Restores defaults</div>
+            </div>
+            <div class="row-right">
+              <span class="chevron" aria-hidden="true">›</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="footer-note" id="status" role="status" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../settingsStore.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
