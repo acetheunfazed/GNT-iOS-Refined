@@ -16,7 +16,7 @@ Forked from "GNT: Glass New Tab – iOS Style Dashboard” by Animesh Patra. A p
 - **Responsive Design** — Optimized for desktop, laptop, and large screens
 - **Smart Caching** — Rounded location caching for privacy-preserving weather
 
-### 🆕 Enhancements in GNT iOS Refined
+## 🆕 Enhancements in GNT iOS Refined
 
 - **Refined To-Do Experience** — Improved text grammar, updated icon consistency, and enhanced visual alignment
 - **Smooth UI Animations** — Added pop-in animations and improved menu positioning for To-Do List, aligned with Sticky Notes design language
