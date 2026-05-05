@@ -646,14 +646,14 @@ function showInputError(inputEl, message, durationMs = 3000) {
   // Style inline for safety (no CSS class needed)
   Object.assign(tooltip.style, {
     position: 'absolute',
-    bottom: '-24px',
-    left: '0',
-    right: '0',
+    bottom: '6px',
+    left: '8px',
+    right: '80px', // leave room for Save button if present
     fontSize: '11px',
     color: '#FF3B30',
-    background: 'rgba(255,59,48,0.12)',
-    padding: '3px 8px',
-    borderRadius: '6px',
+    background: 'transparent',
+    padding: '2px 4px',
+    borderRadius: '4px',
     zIndex: '200',
     pointerEvents: 'none',
     whiteSpace: 'nowrap',
@@ -2260,7 +2260,7 @@ function sanitizeLoadedSettings(input) {
 
     showWeather: sanitizeBool(i.showWeather, DEFAULT_SETTINGS.showWeather),
     useFahrenheit: sanitizeBool(i.useFahrenheit, DEFAULT_SETTINGS.useFahrenheit),
-    weatherLocation: sanitizeStr(i.weatherLocation, INPUT_LIMITS.weatherLocation, DEFAULT_SETTINGS.weatherLocation),
+    weatherLocation: (i.weatherLocation === 'Detecting current location...') ? '' : sanitizeStr(i.weatherLocation, INPUT_LIMITS.weatherLocation, DEFAULT_SETTINGS.weatherLocation),
     useGPS: sanitizeBool(i.useGPS, DEFAULT_SETTINGS.useGPS),
     weatherApiKey: sanitizeStr(i.weatherApiKey, INPUT_LIMITS.weatherApiKey, DEFAULT_SETTINGS.weatherApiKey),
 
@@ -3349,10 +3349,13 @@ function setUseGpsToggleUi(enabled) {
   if (toggle) toggle.checked = !!enabled;
 }
 
-function setWeatherLocationInputValue(value) {
+function setWeatherLocationInputValue(value, { locked = false } = {}) {
   const input = document.getElementById('weatherLocation');
   if (input && typeof value === 'string') {
     input.value = value;
+    input.disabled = locked;
+    input.style.opacity = locked ? '0.7' : '1';
+    input.style.pointerEvents = locked ? 'none' : '';
   }
 }
 
@@ -3419,8 +3422,20 @@ function handleGeolocationError(err) {
     saveSettings();
   }
 
+  // Show the error message inside the location input (replacing the "Detecting" text)
   const input = document.getElementById('weatherLocation');
-  if (input) showInputError(input, msg);
+  if (input) {
+    setWeatherLocationInputValue(msg);
+    input.style.color = '#FF3B30';
+    input.style.outline = '2px solid #FF3B30';
+    // Restore normal styling after a delay
+    setTimeout(() => {
+      input.style.color = '';
+      input.style.outline = '';
+      // Restore the user's saved location (or clear) so they can edit
+      setWeatherLocationInputValue(settings.weatherLocation || '');
+    }, 4000);
+  }
 
   const locationEl = document.getElementById('weatherLocationText');
   if (locationEl && settings.showWeather) {
@@ -4861,6 +4876,18 @@ function initSettingsControls() {
     });
   }
 
+  // ===== WEATHER TOGGLES =====
+  initToggle('toggleWeather', 'showWeather', () => {
+    const weatherCard = document.getElementById('weatherCard');
+    if (weatherCard) weatherCard.style.display = settings.showWeather ? 'flex' : 'none';
+    if (settings.showWeather) safeWeatherFetch(0);
+  });
+
+  initToggle('toggleFahrenheit', 'useFahrenheit', () => {
+    // Re-render weather with new unit
+    safeWeatherFetch(0);
+  });
+
   initToggle('toggleUseGPS', 'useGPS', async () => {
     if (settings.useGPS) {
       // ============ STEP 1: RESET STATE ON TOGGLE ON ============
@@ -4885,7 +4912,7 @@ function initSettingsControls() {
       storageLocalSet({ [GEOLOCATION_TOGGLE_KEY]: true }).catch(() => {});
       
       // Show detecting message
-      setWeatherLocationInputValue('Detecting current location...');
+      setWeatherLocationInputValue('Detecting current location...', { locked: true });
       
       // Start fresh geolocation watch
       startGeolocationWatch();
@@ -4906,10 +4933,8 @@ function initSettingsControls() {
     lastGeoCoords = null;
     
     // Clear loading state from UI
-    const input = document.getElementById('weatherLocation');
-    if (input && input.value === 'Detecting current location...') {
-      input.value = '';
-    }
+    // Clear loading state and restore editability
+    setWeatherLocationInputValue(settings.weatherLocation || '');
     
     // Reset toggle state in storage
     storageLocalSet({ [GEOLOCATION_TOGGLE_KEY]: false }).catch(() => {});
@@ -4926,6 +4951,7 @@ function initSettingsControls() {
     locationInput.setAttribute('maxlength', String(INPUT_LIMITS.weatherLocation));
     saveLocationBtn.addEventListener('click', () => {
       const raw = String(locationInput.value || '').trim();
+      if (raw === 'Detecting current location...') return;
       if (raw.length > INPUT_LIMITS.weatherLocation) {
         showInputError(locationInput, `Location too long (max ${INPUT_LIMITS.weatherLocation} chars).`);
         return;

@@ -2827,6 +2827,9 @@ body:has(.wallpaper.active) .user-name {
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -5277,6 +5280,10 @@ body.ui-scrolling .app-item:active {
   padding: 10px;
 }
 
+.setting-subsection-top {
+  padding-top: 16px;
+}
+
 .setting-subsection {
   margin-top: 16px;
   padding-top: 16px;
@@ -5750,6 +5757,7 @@ body.ui-scrolling .app-item:active {
 
 .coffee-support-link {
   display: inline-flex;
+  flex: 1;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -5799,7 +5807,22 @@ body.ui-scrolling .app-item:active {
   color: var(--text-secondary);
 }
 
+.made-with-love-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 .made-with-love strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.made-with-love-bottom strong {
   color: var(--text);
   font-weight: 600;
 }
@@ -6354,4 +6377,12 @@ body.reduce-motion .welcome-gradient-bg {
   .footer-tip-btn {
     padding: 9px 12px;
   }
+}
+
+.welcome-message p {
+  margin-bottom: 12px; /* adjust: 8px–16px based on your UI */
+}
+
+.welcome-message p:last-child {
+  margin-bottom: 0;
 }

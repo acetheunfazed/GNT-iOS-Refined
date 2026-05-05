@@ -483,3 +483,9 @@
       .perm-grid, .security-grid { grid-template-columns: 1fr; }
       .contact-card { flex-direction: column; text-align: center; }
     }
+
+    .footer-link {
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+    }
