@@ -66,25 +66,25 @@
     </svg>
   </button>
 
-  <!-- ToDo Widget - Simple Clean Style -->
+  <!-- To-do Widget - Simple Clean Style -->
   <div class="todo-widget" id="todoWidget" role="button" tabindex="0" aria-label="Open todo list">
     <div class="todo-icon-box">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path
-          d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <polyline points="9 11 12 14 22 4" />
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
       </svg>
     </div>
-    <span class="todo-widget-label">To-do List</span>
   </div>
 
   <!-- Sticky Notes (Collapsed button + Expandable panel) -->
   <button class="sticky-notes-fab" id="stickyNotesBtn" type="button" title="Sticky Notes" aria-label="Sticky Notes">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
       stroke-linejoin="round" aria-hidden="true">
-      <path d="M16 4H8a2 2 0 0 0-2 2v14l4-2 4 2 4-2 4 2V6a2 2 0 0 0-2-2h-4" />
-      <path d="M9 3h6" />
-      <path d="M9 9h10" />
-      <path d="M9 13h10" />
+      <path d="M14 4H6a2 2 0 0 0-2 2v14l4-2 4 2 4-2 4 2V6a2 2 0 0 0-2-2h-4" />
+      <path d="M7 3h6" />
+      <path d="M7 9h10" />
+      <path d="M7 13h10" />
     </svg>
   </button>
 
@@ -119,11 +119,8 @@
   <div class="ai-tools" id="aiTools">
     <button class="ai-tools-widget" id="aiToolsBtn" type="button" title="AI Tools" aria-label="AI Tools">
       <div class="ai-tools-icon-box" aria-hidden="true">
-        <img src="assets/icons/icon-128.png"
-          srcset="assets/icons/icon-32.png 32w, assets/icons/icon-48.png 48w, assets/icons/icon-128.png 128w"
-          sizes="44px" alt="" draggable="false" width="44" height="44">
+        <img src="assets/icons/ai.gif" alt="AI Tools" draggable="false" width="32" height="32">
       </div>
-      <span class="ai-tools-label">AI Tools</span>
     </button>
 
     <div class="ai-tools-menu" id="aiToolsMenu" aria-hidden="true">
@@ -150,7 +147,7 @@
 
   <!-- ToDo Modal -->
   <div class="modal-overlay" id="todoOverlay"></div>
-  <div class="todo-modal glass-card" id="todoModal">
+  <div class="todo-modal" id="todoModal">
     <div class="modal-header">
       <h2>📝 To-do List</h2>
       <button class="modal-close" id="closeTodoModal" aria-label="Close todo list">
@@ -325,17 +322,17 @@
       <div class="weather-card glass-card" id="weatherCard">
         <div class="weather-main">
           <div class="weather-icon" id="weatherIcon">☀️</div>
+        </div>
+        <div class="weather-details">
           <div class="weather-temp">
             <span class="temp-value" id="tempValue">21</span>
             <span class="temp-unit">°</span>
           </div>
-        </div>
-        <div class="weather-details">
-          <div class="weather-condition" id="weatherCondition">Partly Cloudy</div>
+
           <div class="weather-location" id="weatherLocationText">Locating...</div>
           <div class="weather-extra">
-            <span id="weatherHumidity">💧 45%</span>
-            <span id="weatherFeels">🌡️ 20°</span>
+            <span id="weatherHumidity" title="Humidity">💧 45%</span>
+            <span id="weatherFeels" title="Feels like">🌡️ 20°</span>
           </div>
         </div>
       </div>

@@ -798,22 +798,22 @@ body:has(.wallpaper.active) .apps-modal {
 /* === ToDo Widget - Glass Style Matching Screen === */
 .todo-widget {
   position: fixed;
-  top: 20px;
-  left: 20px;
+  top: 24px;
+  left: 24px;
   z-index: 50;
-  width: 70px;
-  padding: 12px 10px;
-  border-radius: 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.25);
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(60px) saturate(180%);
   -webkit-backdrop-filter: blur(60px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.95);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 0 0 0.5px rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: background 0.3s var(--ease-out-expo), 
               box-shadow 0.3s ease,
               transform 0.3s var(--spring-bounce);
@@ -830,20 +830,15 @@ body:has(.wallpaper.active) .apps-modal {
 }
 
 .todo-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #007AFF 0%, #0051D4 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.35);
 }
 
 .todo-icon-box svg {
   width: 20px;
   height: 20px;
-  color: white;
+  color: var(--text);
 }
 
 .todo-widget-label {
@@ -863,8 +858,8 @@ body:has(.wallpaper.active) .apps-modal {
   right: 24px;
   bottom: 24px;
   z-index: 55;
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.25);
   background: rgba(255, 255, 255, 0.15);
@@ -1086,13 +1081,25 @@ body:has(.wallpaper.active) .apps-modal {
   background: rgba(255, 240, 220, 0.3);
 }
 
-/* Light mode - Todo Widget */
+/* Light mode - To-do Widget */
 [data-theme="light"] .todo-widget {
   background: rgba(60, 40, 20, 0.12);
   border-color: rgba(60, 40, 20, 0.15);
+  color: rgba(40, 25, 10, 0.8);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(60px) saturate(160%);
   -webkit-backdrop-filter: blur(60px) saturate(160%);
+}
+
+[data-theme="light"] .todo-modal {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="light"] .todo-icon-box {
+  background: transparent;
+  border: none;
 }
 
 [data-theme="light"] .todo-widget:hover {
@@ -1107,8 +1114,8 @@ body:has(.wallpaper.active) .apps-modal {
 /* === AI Tools Widget - Bottom Left === */
 .ai-tools {
   position: fixed;
-  left: 20px;
-  bottom: 20px;
+  left: 24px;
+  bottom: 24px;
   z-index: 55;
 }
 
@@ -1118,9 +1125,10 @@ body:has(.wallpaper.active) .apps-modal {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 18px;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(60px) saturate(180%);
   -webkit-backdrop-filter: blur(60px) saturate(180%);
@@ -1149,9 +1157,8 @@ body:has(.wallpaper.active) .apps-modal {
 }
 
 .ai-tools.open .ai-tools-icon-box {
-  width: 44px;
-  height: 44px;
-  border-radius: 16px;
+  width: 48px;
+  height: 48px;
 }
 
 .ai-tools-widget:hover {
@@ -1164,15 +1171,14 @@ body:has(.wallpaper.active) .apps-modal {
 }
 
 .ai-tools-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent) 0%, rgba(var(--accent-rgb), 0.65) 100%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.35);
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .ai-tools-icon-box svg {
@@ -1184,8 +1190,8 @@ body:has(.wallpaper.active) .apps-modal {
 .ai-tools-icon-box img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
+  object-fit: contain;
+  display: block;
 }
 
 .ai-tools-label {
@@ -1276,6 +1282,8 @@ body:has(.wallpaper.active) .apps-modal {
 .ai-tool-icon {
   width: 28px;
   height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .ai-tools.open .ai-tools-menu {
@@ -1300,30 +1308,34 @@ body:has(.wallpaper.active) .apps-modal {
   }
 }
 
-/* ToDo Modal - Glass Effect */
+/* To-do Modal - Glass Effect */
 .todo-modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.88) translateZ(0);
+  top: 90px;
+  left: 24px;
+  z-index: 100;
   width: 380px;
-  max-width: 90vw;
-  max-height: 70vh;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 120px);
+  padding: 0;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: transform 0.4s var(--spring-smooth), opacity 0.3s var(--ease-out-expo), visibility 0s linear 0.4s;
-  z-index: 100;
+  transform: translateY(-16px) scale(0.92);
+  transition: opacity 0.3s var(--ease-out-expo),
+              transform 0.35s var(--spring-smooth),
+              visibility 0s linear 0.35s;
+  background: rgba(30, 30, 45, 0.45);
+  backdrop-filter: blur(60px) saturate(160%);
+  -webkit-backdrop-filter: blur(60px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(60px) saturate(180%);
-  -webkit-backdrop-filter: blur(60px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: var(--radius);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  contain: layout style;
 }
 
 /* Rate Prompt Modal (Every 50 Visits) */
@@ -1615,8 +1627,10 @@ body:has(.wallpaper.active) .apps-modal {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  transform: translate(-50%, -50%) scale(1) translateZ(0);
-  transition: transform 0.45s var(--spring-smooth), opacity 0.3s var(--ease-out-expo), visibility 0s linear 0s;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.25s var(--ease-out-expo),
+              transform 0.35s var(--spring-smooth),
+              visibility 0s linear 0s;
 }
 
 .todo-modal .modal-header {
@@ -2059,14 +2073,7 @@ body:has(.wallpaper.active) .user-name {
   border-color: rgba(255,255,255,0.3);
 }
 
-/* Modals use transform for centering — never override it on hover */
-.todo-modal.glass-card:hover {
-  transform: translate(-50%, -50%) scale(1);
-}
 
-.todo-modal.glass-card:not(.active):hover {
-  transform: translate(-50%, -50%) scale(0.95);
-}
 
 .apps-modal.glass-card:hover {
   transform: translate(-50%, -50%) scale(1);
@@ -2161,6 +2168,17 @@ body:has(.wallpaper.active) .user-name {
   gap: 80px;
   padding: 40px 80px;
   align-items: center;
+  transition: grid-template-columns 0.4s var(--ease-out-expo), padding 0.4s var(--ease-out-expo);
+}
+
+.main-content.centered-layout {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  padding: 40px 20px;
+}
+
+.main-content.centered-layout .left-section {
+  display: none;
 }
 
 /* === Left Section - Clock & Greeting === */
@@ -2571,21 +2589,22 @@ body:has(.wallpaper.active) .user-name {
 .weather-main {
   display: flex;
   align-items: center;
-  gap: 20px;
 }
 
 .weather-icon {
-  font-size: 64px;
+  font-size: 96px;
   line-height: 1;
 }
 
 .weather-temp {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-end;
+  margin-bottom: -10px;
 }
 
 .temp-value {
-  font-size: 72px;
+  font-size: 64px;
   font-weight: 200;
   line-height: 1;
 }
@@ -2597,7 +2616,10 @@ body:has(.wallpaper.active) .user-name {
 }
 
 .weather-details {
-  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
 }
 
 .weather-condition {
@@ -2609,7 +2631,6 @@ body:has(.wallpaper.active) .user-name {
 .weather-location {
   font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 10px;
 }
 
 .weather-extra {
@@ -2617,6 +2638,7 @@ body:has(.wallpaper.active) .user-name {
   gap: 16px;
   font-size: 14px;
   color: var(--text-secondary);
+  justify-content: flex-end;
 }
 
 /* === Search Card === */
@@ -3469,6 +3491,10 @@ body.reduce-motion .dock-container.dock-preload {
   opacity: 1;
   visibility: visible;
   transition: opacity 0.25s var(--ease-out-expo), visibility 0s linear 0s;
+}
+
+#todoOverlay {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* iOS 26 Liquid Glass Animated Gradient Overlay - Simplified */

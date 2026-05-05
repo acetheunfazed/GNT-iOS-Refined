@@ -1859,13 +1859,14 @@ function initAiTools() {
   }
 
   function openMenu() {
-    // Always start from a clean, closed hub position.
+    // Reset first
     resetHubPosition();
-    // Measure after reset lands, then animate to the hub center + ring.
+    // Add open class so we measure the final expanded size (64x64)
+    setOpen(true);
+    
     requestAnimationFrame(() => {
       baseCenter = getButtonCenter();
       layoutFromBase();
-      setOpen(true);
     });
   }
 
@@ -2308,6 +2309,13 @@ function applyMicVisibility() {
 
 // Apply all visual settings
 function applyAllSettings() {
+  // Centered layout logic: center Weather/Search if Clock & Greeting are both hidden
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) {
+    const bothHidden = settings.hideClock && !settings.showGreeting;
+    mainContent.classList.toggle('centered-layout', bothHidden);
+  }
+
   // Clock visibility
   const clockContainer = document.querySelector('.clock-container');
   if (clockContainer) {
@@ -3620,7 +3628,6 @@ function renderWeather({ tempC, feelsC, humidity, conditionText, locationText, i
   })();
 
   document.getElementById('tempValue').textContent = Math.round(temp);
-  document.getElementById('weatherCondition').textContent = conditionText || 'Unknown';
   const locationEl = document.getElementById('weatherLocationText');
   if (locationEl) locationEl.textContent = locationText || '';
   document.getElementById('weatherHumidity').textContent = `💧 ${Math.round(humidity)}%`;
