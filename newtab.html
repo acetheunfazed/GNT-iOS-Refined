@@ -124,24 +124,7 @@
     </button>
 
     <div class="ai-tools-menu" id="aiToolsMenu" aria-hidden="true">
-      <a class="ai-tool-item" href="https://chat.openai.com/" title="ChatGPT" aria-label="ChatGPT">
-        <img class="ai-tool-icon" alt="ChatGPT">
-      </a>
-      <a class="ai-tool-item" href="https://gemini.google.com/" title="Gemini" aria-label="Gemini">
-        <img class="ai-tool-icon" alt="Gemini">
-      </a>
-      <a class="ai-tool-item" href="https://claude.ai/" title="Claude" aria-label="Claude">
-        <img class="ai-tool-icon" alt="Claude">
-      </a>
-      <a class="ai-tool-item" href="https://www.perplexity.ai/" title="Perplexity" aria-label="Perplexity">
-        <img class="ai-tool-icon" alt="Perplexity">
-      </a>
-      <a class="ai-tool-item" href="https://copilot.microsoft.com/" title="Copilot" aria-label="Copilot">
-        <img class="ai-tool-icon" alt="Copilot">
-      </a>
-      <a class="ai-tool-item" href="https://www.midjourney.com/" title="Midjourney" aria-label="Midjourney">
-        <img class="ai-tool-icon" alt="Midjourney">
-      </a>
+      <!-- Dynamic AI tools will be rendered here -->
     </div>
   </div>
 
@@ -464,9 +447,40 @@
     </header>
 
     <div class="settings-content">
-      <!-- Clock Section -->
+
+      <!-- Greeting Section -->
       <div class="settings-section">
-        <h3>🕐 Clock & Time</h3>
+        <h3>👋 Greeting</h3>
+        <div class="setting-item column">
+          <label class="setting-title" for="settingsName">Your Name</label>
+          <input type="text" id="settingsName" name="settingsName" class="setting-input" placeholder="Enter your name"
+            maxlength="22">
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Greeting</span>
+            <span class="setting-desc">Display greeting message</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleGreeting" name="toggleGreeting" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Customizable Text</span>
+            <span class="setting-desc">Show custom name below clock</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleCustomText" name="toggleCustomText" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Time Section -->
+      <div class="settings-section">
+        <h3>🕐 Time</h3>
         <div class="setting-item">
           <div class="setting-info">
             <span class="setting-title">Hide Clock</span>
@@ -509,36 +523,6 @@
         </div>
       </div>
 
-      <!-- Greeting Section -->
-      <div class="settings-section">
-        <h3>👋 Greeting</h3>
-        <div class="setting-item">
-          <div class="setting-info">
-            <span class="setting-title">Show Greeting</span>
-            <span class="setting-desc">Display greeting message</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleGreeting" name="toggleGreeting" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-item">
-          <div class="setting-info">
-            <span class="setting-title">Customizable Text</span>
-            <span class="setting-desc">Show custom name below clock</span>
-          </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleCustomText" name="toggleCustomText" checked>
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div class="setting-item column">
-          <label class="setting-title" for="settingsName">Your Name</label>
-          <input type="text" id="settingsName" name="settingsName" class="setting-input" placeholder="Enter your name"
-            maxlength="22">
-        </div>
-      </div>
-
       <!-- Search Section -->
       <div class="settings-section">
         <h3>🔍 Search</h3>
@@ -563,8 +547,8 @@
           </label>
         </div>
         <div class="setting-item column">
-          <label class="setting-title" for="voiceLanguageSelect">Voice English Accent</label>
-          <span class="setting-desc">Choose the English language variant for microphone recognition</span>
+          <label class="setting-title" for="voiceLanguageSelect">English Voice Accent</label>
+          <span class="setting-desc">Choose your language variant for voice recognition</span>
           <select id="voiceLanguageSelect" name="voiceLanguageSelect" class="setting-select">
             <option value="auto">Auto (Browser English)</option>
             <option value="en-US">English (United States)</option>
@@ -611,16 +595,6 @@
             <span class="toggle-slider"></span>
           </label>
         </div>
-        <div class="setting-item column">
-          <label class="setting-title" for="weatherLocation">Enter your Location</label>
-          <span class="setting-desc">If the weather location isn't correct</span>
-          <div class="input-with-btn">
-            <input type="text" id="weatherLocation" name="weatherLocation" class="setting-input"
-              placeholder="Your City or Coordinates (Latitude, Longitude)" maxlength="120">
-            <button class="save-input-btn" id="saveLocation" aria-label="Save location">Save</button>
-          </div>
-          <a class="help-link" href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy policy</a>
-        </div>
 
         <div class="setting-item">
           <div class="setting-info">
@@ -631,6 +605,17 @@
             <input type="checkbox" id="toggleUseGPS" name="toggleUseGPS">
             <span class="toggle-slider"></span>
           </label>
+        </div>
+
+        <div class="setting-item column">
+          <label class="setting-title" for="weatherLocation">Enter your Location</label>
+          <span class="setting-desc">If the weather location isn't correct</span>
+          <div class="input-with-btn">
+            <input type="text" id="weatherLocation" name="weatherLocation" class="setting-input"
+              placeholder="Your City or Coordinates (Latitude, Longitude)" maxlength="120">
+            <button class="save-input-btn" id="saveLocation" aria-label="Save location">Save</button>
+          </div>
+          <a class="help-link" href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy policy</a>
         </div>
 
         <div class="setting-item column">
@@ -656,6 +641,16 @@
           </div>
           <label class="toggle-switch">
             <input type="checkbox" id="toggleTodoWidget" name="toggleTodoWidget" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Sticky Notes</span>
+            <span class="setting-desc">Quick notes widget on screen</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleStickyNotes" name="toggleStickyNotes">
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -701,15 +696,16 @@
             <!-- Dynamic dock apps will be rendered here -->
           </div>
         </div>
-        <div class="setting-item">
-          <div class="setting-info">
-            <span class="setting-title">Show Sticky Notes</span>
-            <span class="setting-desc">Quick notes widget on screen</span>
+
+        <!-- Custom AI Tools -->
+        <div class="setting-subsection">
+          <div class="subsection-header">
+            <span class="setting-title">Custom AI Tools</span>
+            <button class="add-dock-btn" id="addAiTool" aria-label="Add AI tool">Add</button>
           </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleStickyNotes" name="toggleStickyNotes">
-            <span class="toggle-slider"></span>
-          </label>
+          <div class="dock-apps-list" id="aiToolsList">
+            <!-- Dynamic AI tools will be rendered here -->
+          </div>
         </div>
       </div>
 

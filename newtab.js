@@ -42,7 +42,8 @@ const DEFAULT_SETTINGS = {
   wallpaperEnabled: false,
   wallpaperUrl: '',
   wallpaperBlur: 0,
-  wallpaperDim: 0
+  wallpaperDim: 0,
+  showAiTools: true
 };
 
 // Default custom dock apps - Users can fully customize
@@ -50,6 +51,16 @@ const DEFAULT_DOCK_APPS = [
   { id: 1, name: 'Gmail', url: 'https://mail.google.com/', icon: '', domain: 'gmail.com' },
   { id: 2, name: 'YouTube', url: 'https://youtube.com/', icon: '', domain: 'youtube.com' },
   { id: 3, name: 'Gemini', url: 'https://gemini.google.com/', icon: '', domain: 'gemini.google.com' }
+];
+
+// Default AI tools
+const DEFAULT_AI_TOOLS = [
+  { id: 1, name: 'ChatGPT', url: 'https://chat.openai.com/' },
+  { id: 2, name: 'Gemini', url: 'https://gemini.google.com/' },
+  { id: 3, name: 'Claude', url: 'https://claude.ai/' },
+  { id: 4, name: 'Perplexity', url: 'https://www.perplexity.ai/' },
+  { id: 5, name: 'Midjourney', url: 'https://www.midjourney.com/' },
+  { id: 6, name: 'Leonardo', url: 'https://leonardo.ai/' }
 ];
 
 // Motivational Quotes
@@ -191,6 +202,7 @@ let _uiScrollRafPending = false;
 // State
 let settings = { ...DEFAULT_SETTINGS };
 let customDockApps = [...DEFAULT_DOCK_APPS];
+let customAiTools = [...DEFAULT_AI_TOOLS];
 const GEOLOCATION_TOGGLE_KEY = 'useGeolocation';
 
 const DEBUG = false;
@@ -1053,6 +1065,7 @@ async function runFullInit(source = 'init') {
     initAiTools();
     initSettingsPanel();
     initDockAppsSettings();
+    initAiToolsSettings();
     initModals();
     initTodo();
     initStickyNotes();
@@ -1749,6 +1762,37 @@ function initStickyNotes() {
 // AI Tools Radial Menu
 // ============================================
 
+function renderAiToolsMenu() {
+  const menu = document.getElementById('aiToolsMenu');
+  if (!menu) return;
+
+  clearElement(menu);
+
+  customAiTools.forEach(tool => {
+    const item = document.createElement('a');
+    item.className = 'ai-tool-item';
+    item.href = tool.url;
+    item.title = tool.name;
+    item.setAttribute('aria-label', tool.name);
+    item.target = '_blank';
+    item.rel = 'noopener noreferrer';
+
+    const img = document.createElement('img');
+    img.className = 'ai-tool-icon';
+    img.alt = tool.name;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+
+    item.appendChild(img);
+    menu.appendChild(item);
+
+    attachIconFallback(img, getFaviconCandidates(tool.url), {
+      name: tool.name,
+      cacheHost: getHostnameFromAnyUrl(tool.url) || '',
+    });
+  });
+}
+
 function initAiTools() {
   const container = document.getElementById('aiTools');
   const btn = document.getElementById('aiToolsBtn');
@@ -1760,23 +1804,11 @@ function initAiTools() {
   if (container.dataset.initBound) return;
   container.dataset.initBound = '1';
 
-  const items = Array.from(menu.querySelectorAll('.ai-tool-item'));
-  const imgs = items.map(item => item.querySelector('img'));
+  // Initial render
+  renderAiToolsMenu();
 
   // Store the closed-position center so we can animate from a stable base.
   let baseCenter = null;
-
-  // Attach icons using the existing, robust favicon candidate chain.
-  items.forEach((item, i) => {
-    const img = imgs[i];
-    if (!img) return;
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    attachIconFallback(img, getFaviconCandidates(item.href), {
-      name: item.textContent || item.title || '',
-      cacheHost: getHostnameFromAnyUrl(item.href) || '',
-    });
-  });
 
   function getButtonCenter() {
     const iconBox = btn.querySelector('.ai-tools-icon-box') || btn;
@@ -1814,6 +1846,7 @@ function initAiTools() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
+    const items = Array.from(menu.querySelectorAll('.ai-tool-item'));
     const count = items.length;
     const itemSize = 56;
     const gap = 12;
@@ -1845,6 +1878,7 @@ function initAiTools() {
     menu.style.setProperty('--ox', `${Math.round(cx)}px`);
     menu.style.setProperty('--oy', `${Math.round(cy)}px`);
 
+    // Each item's transition is relative to the origin (--ox, --oy).
     const startDeg = -90;
     const step = 360 / Math.max(1, count);
     items.forEach((item, index) => {
@@ -2025,9 +2059,18 @@ function applyMotionToggles() {
   const blur = Number.isFinite(Number(settings.wallpaperBlur)) ? Number(settings.wallpaperBlur) : 0;
   const dim = Number.isFinite(Number(settings.wallpaperDim)) ? Number(settings.wallpaperDim) : 0;
   const blurClamped = Math.min(20, Math.max(0, blur));
-  const dimClamped = Math.min(50, Math.max(0, dim));
+    const dimClamped = Math.min(50, Math.max(0, dim));
   document.documentElement.style.setProperty('--wallpaper-blur', `${blurClamped}px`);
   document.documentElement.style.setProperty('--wallpaper-dim', String(dimClamped / 100));
+}
+
+function sanitizeAiTools(tools) {
+  if (!Array.isArray(tools)) return [...DEFAULT_AI_TOOLS];
+  return tools.map(t => ({
+    id: t.id || Date.now() + Math.random(),
+    name: String(t.name || 'New AI Tool').substring(0, 50),
+    url: String(t.url || '').substring(0, 500)
+  })).filter(t => t.url);
 }
 
 async function loadSettings() {
@@ -2051,13 +2094,21 @@ async function loadSettings() {
     } else {
       customDockApps = sanitizeDockApps(customDockApps);
     }
+
+    // Load custom AI tools
+    const savedAiTools = localStorage.getItem('ios-newtab-ai-tools');
+    if (savedAiTools) {
+      customAiTools = sanitizeAiTools(JSON.parse(savedAiTools));
+    } else {
+      customAiTools = sanitizeAiTools(customAiTools);
+    }
   } catch (e) {
     console.error('Error loading settings:', e);
   }
 
   // Merge in Options/settingsStore.js settings (chrome.storage.local)
   try {
-    const { settings: storedSettings, dockApps, wallpaper, [GEOLOCATION_TOGGLE_KEY]: storedUseGeolocation } = await storageLocalGet(['settings', 'dockApps', 'wallpaper', GEOLOCATION_TOGGLE_KEY]);
+    const { settings: storedSettings, dockApps, aiTools, wallpaper, [GEOLOCATION_TOGGLE_KEY]: storedUseGeolocation } = await storageLocalGet(['settings', 'dockApps', 'aiTools', 'wallpaper', GEOLOCATION_TOGGLE_KEY]);
 
     const hasStoredSettings = !!storedSettings;
 
@@ -2072,6 +2123,10 @@ async function loadSettings() {
 
     if (dockApps) {
       customDockApps = sanitizeDockApps(dockApps);
+    }
+
+    if (aiTools) {
+      customAiTools = sanitizeAiTools(aiTools);
     }
 
     if (wallpaper) {
@@ -2230,6 +2285,7 @@ function sanitizeLoadedSettings(input) {
     wallpaperUrl: sanitizeStr(i.wallpaperUrl, 900, DEFAULT_SETTINGS.wallpaperUrl),
     wallpaperBlur: clampNum(i.wallpaperBlur, 0, 20, DEFAULT_SETTINGS.wallpaperBlur),
     wallpaperDim: clampNum(i.wallpaperDim, 0, 50, DEFAULT_SETTINGS.wallpaperDim),
+    showAiTools: sanitizeBool(i.showAiTools, DEFAULT_SETTINGS.showAiTools),
 
     // wallpaper is stored separately in chrome.storage.local
   };
@@ -2266,6 +2322,21 @@ function saveDockApps() {
     storageLocalSet({ dockApps: customDockApps }).catch(() => {});
   } catch (e) {
     console.error('Error saving dock apps:', e);
+  }
+}
+
+function saveAiTools() {
+  try {
+    customAiTools = sanitizeAiTools(customAiTools);
+    localStorage.setItem('ios-newtab-ai-tools', JSON.stringify(customAiTools));
+
+    storageLocalSet({ aiTools: customAiTools }).catch(() => {});
+    
+    // Immediately re-render menu and settings
+    renderAiToolsMenu();
+    renderAiToolsSettings();
+  } catch (e) {
+    console.error('Error saving AI tools:', e);
   }
 }
 
@@ -2307,6 +2378,12 @@ function applyMicVisibility() {
   }
 }
 
+function applyAiToolsVisibility() {
+  const aiTools = document.getElementById('aiTools');
+  if (!aiTools) return;
+  aiTools.style.display = settings.showAiTools ? 'block' : 'none';
+}
+
 // Apply all visual settings
 function applyAllSettings() {
   // Centered layout logic: center Weather/Search if Clock & Greeting are both hidden
@@ -2344,6 +2421,7 @@ function applyAllSettings() {
   
   // Microphone visibility
   applyMicVisibility();
+  applyAiToolsVisibility();
 
   const voiceLanguageSelect = document.getElementById('voiceLanguageSelect');
   if (voiceLanguageSelect) {
@@ -4928,6 +5006,7 @@ function initSettingsControls() {
   
   // Initialize custom dock apps UI
   initDockAppsSettings();
+  initAiToolsSettings();
   
   // ===== THEME =====
   const themeOptions = document.querySelectorAll('#themeSelector .theme-option');
@@ -5036,6 +5115,166 @@ function hexToRgb(hex) {
 // ============================================
 
 let currentEditingDockAppId = null;
+
+function initAiToolsSettings() {
+  const addBtn = document.getElementById('addAiTool');
+  if (addBtn && !addBtn.dataset.bound) {
+    addBtn.addEventListener('click', () => {
+      const newId = Date.now();
+      customAiTools.push({
+        id: newId,
+        name: 'New AI Tool',
+        url: 'https://'
+      });
+      saveAiTools();
+    });
+    addBtn.dataset.bound = '1';
+  }
+  renderAiToolsSettings();
+
+  const toggleAiTools = document.getElementById('toggleAiTools');
+  if (toggleAiTools) {
+    toggleAiTools.checked = !!settings.showAiTools;
+    if (!toggleAiTools.dataset.bound) {
+      toggleAiTools.addEventListener('change', (e) => {
+        settings.showAiTools = e.target.checked;
+        saveSettings();
+        applyAiToolsVisibility();
+      });
+      toggleAiTools.dataset.bound = '1';
+    }
+  }
+}
+
+function renderAiToolsSettings() {
+  const list = document.getElementById('aiToolsList');
+  if (!list) return;
+
+  clearElement(list);
+
+  if (customAiTools.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'dock-empty';
+    empty.textContent = 'No custom tools. Click Add to create one.';
+    list.appendChild(empty);
+    return;
+  }
+
+  customAiTools.forEach((tool, index) => {
+    const item = document.createElement('div');
+    item.className = 'dock-app-item ai-tool-settings-item';
+    item.dataset.id = String(tool.id);
+
+    // Left: Icon Preview
+    const iconWrap = document.createElement('div');
+    iconWrap.className = 'dock-app-icon';
+    const img = document.createElement('img');
+    img.alt = tool.name || '';
+    iconWrap.appendChild(img);
+    item.appendChild(iconWrap);
+
+    attachIconFallback(img, getFaviconCandidates(tool.url), {
+      name: tool.name,
+      cacheHost: getHostnameFromAnyUrl(tool.url) || '',
+    });
+
+    // Middle: Inputs
+    const inputs = document.createElement('div');
+    inputs.className = 'dock-app-inputs';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'dock-app-name';
+    nameInput.value = tool.name || '';
+    nameInput.dataset.id = String(tool.id);
+    nameInput.dataset.field = 'name';
+    nameInput.placeholder = 'Tool name';
+    nameInput.maxLength = 50;
+
+    const urlInput = document.createElement('input');
+    urlInput.type = 'text';
+    urlInput.className = 'dock-app-url';
+    urlInput.value = tool.url || '';
+    urlInput.dataset.id = String(tool.id);
+    urlInput.dataset.field = 'url';
+    urlInput.placeholder = 'https://ai-service.com';
+    urlInput.maxLength = 500;
+
+    inputs.appendChild(nameInput);
+    inputs.appendChild(urlInput);
+    item.appendChild(inputs);
+
+    // Right: Reorder & Delete
+    const actions = document.createElement('div');
+    actions.className = 'dock-app-actions ai-tool-actions';
+
+    const reorderWrap = document.createElement('div');
+    reorderWrap.className = 'ai-reorder-buttons';
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'ai-reorder-btn up';
+    upBtn.innerHTML = '▲';
+    upBtn.disabled = index === 0;
+    upBtn.addEventListener('click', () => {
+      if (index > 0) {
+        const temp = customAiTools[index];
+        customAiTools[index] = customAiTools[index - 1];
+        customAiTools[index - 1] = temp;
+        saveAiTools();
+      }
+    });
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'ai-reorder-btn down';
+    downBtn.innerHTML = '▼';
+    downBtn.disabled = index === customAiTools.length - 1;
+    downBtn.addEventListener('click', () => {
+      if (index < customAiTools.length - 1) {
+        const temp = customAiTools[index];
+        customAiTools[index] = customAiTools[index + 1];
+        customAiTools[index + 1] = temp;
+        saveAiTools();
+      }
+    });
+
+    reorderWrap.appendChild(upBtn);
+    reorderWrap.appendChild(downBtn);
+    actions.appendChild(reorderWrap);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'ai-delete-btn-minimal';
+    deleteBtn.dataset.id = String(tool.id);
+    deleteBtn.title = 'Remove AI tool';
+    deleteBtn.type = 'button';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', () => {
+      customAiTools = customAiTools.filter(t => String(t.id) !== String(tool.id));
+      saveAiTools();
+    });
+
+    item.appendChild(actions);
+    item.appendChild(deleteBtn); // Top right
+    list.appendChild(item);
+
+    // Event listeners for inputs
+    const saveOnInput = (e) => {
+      const field = e.target.dataset.field;
+      const id = e.target.dataset.id;
+      const t = customAiTools.find(x => String(x.id) === String(id));
+      if (t) {
+        t[field] = e.target.value;
+        // debounce save
+        clearTimeout(t._saveTimer);
+        t._saveTimer = setTimeout(() => {
+          saveAiTools();
+        }, 800);
+      }
+    };
+
+    nameInput.addEventListener('input', saveOnInput);
+    urlInput.addEventListener('input', saveOnInput);
+  });
+}
 
 function initDockAppsSettings() {
   const addBtn = document.getElementById('addDockApp');

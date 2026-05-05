@@ -5312,24 +5312,93 @@ body.ui-scrolling .app-item:active {
 .dock-app-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  transition: background 0.2s var(--ease-out-expo),
-              border-color 0.2s ease;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 14px;
+  position: relative;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.ai-tool-settings-item {
+  padding-right: 32px; /* Make space for top-right delete button */
+}
+
+.ai-delete-btn-minimal {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 2;
+  padding: 0;
+}
+
+.ai-delete-btn-minimal:hover {
+  color: #FF3B30;
+  text-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
+  transform: scale(1.2);
+}
+
+.ai-reorder-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-reorder-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: white;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ai-reorder-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.ai-reorder-btn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.subsection-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle-switch.small {
+  transform: scale(0.85);
 }
 
 .dock-app-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
 }
 
 .dock-app-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
@@ -5339,9 +5408,10 @@ body.ui-scrolling .app-item:active {
 }
 
 .dock-app-icon img {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
+  border-radius: 8px; /* Round the icon image itself more prominently */
 }
 
 .dock-app-inputs {
