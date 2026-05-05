@@ -48,6 +48,8 @@ const DEFAULT_SETTINGS = Object.freeze({
   
   // === Dock ===
   showDock: false,
+  showAiTools: true,
+  showCustomDock: true,
   
   // === Wallpaper ===
   wallpaperEnabled: false,
@@ -167,6 +169,8 @@ function sanitizeSettings(input) {
     
     // Dock
     showDock: typeof i.showDock === 'boolean' ? i.showDock : d.showDock,
+    showAiTools: typeof i.showAiTools === 'boolean' ? i.showAiTools : d.showAiTools,
+    showCustomDock: typeof i.showCustomDock === 'boolean' ? i.showCustomDock : d.showCustomDock,
     
     // Wallpaper
     wallpaperEnabled: typeof i.wallpaperEnabled === 'boolean' ? i.wallpaperEnabled : d.wallpaperEnabled,

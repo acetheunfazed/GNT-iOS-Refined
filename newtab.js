@@ -31,7 +31,7 @@ const DEFAULT_SETTINGS = {
   useGPS: false,
   weatherApiKey: '',
   // Apps settings
-  showGoogleApps: true,
+  showAllApps: true,
   adaptiveIcons: false,
   showTodoWidget: true,
   showStickyNotes: false,
@@ -43,7 +43,8 @@ const DEFAULT_SETTINGS = {
   wallpaperUrl: '',
   wallpaperBlur: 0,
   wallpaperDim: 0,
-  showAiTools: true
+  showAiTools: true,
+  showCustomDock: true
 };
 
 // Default custom dock apps - Users can fully customize
@@ -65,7 +66,7 @@ const DEFAULT_AI_TOOLS = [
 
 // Motivational Quotes
 const quotes = [
-  "Stay hungry, stay foolish. - Steve Jobs",
+  "Stay hungry, stay foolish.",
   "Focus creates results.",
   "Consistency beats intensity.",
   "Small steps still move you forward.",
@@ -80,7 +81,7 @@ const quotes = [
   "Protect your mornings, they shape your days.",
   "Progress compounds.",
   "Think long term, act today.",
-  "The future depends on what you do today. - Mahatma Gandhi",
+  "The future depends on what you do today.",
   "What you repeat, you become.",
   "If it matters, schedule it.",
   "Simple routines build extraordinary outcomes.",
@@ -93,47 +94,18 @@ let _quoteTransitionTimer = null;
 let _quoteAnimating = false;
 const QUOTE_TRANSITION_MS = 220;
 
-// All 38 Google Apps
-const allApps = [
-  { name: 'Account', url: 'https://myaccount.google.com', domain: 'myaccount.google.com' },
-  { name: 'YouTube', url: 'https://youtube.com', domain: 'youtube.com' },
-  { name: 'Gmail', url: 'https://mail.google.com', domain: 'gmail.com' },
-  { name: 'Maps', url: 'https://maps.google.com', domain: 'maps.google.com' },
-  { name: 'YT Music', url: 'https://music.youtube.com', domain: 'music.youtube.com' },
-  { name: 'Photos', url: 'https://photos.google.com', domain: 'photos.google.com' },
-  { name: 'Calendar', url: 'https://calendar.google.com', domain: 'calendar.google.com' },
-  { name: 'ChatGPT', url: 'https://chat.openai.com', domain: 'openai.com' },
-  { name: 'Gemini', url: 'https://gemini.google.com', domain: 'gemini.google.com' },
-  { name: 'Drive', url: 'https://drive.google.com', domain: 'drive.google.com' },
-  { name: 'Contacts', url: 'https://contacts.google.com', domain: 'contacts.google.com' },
-  { name: 'News', url: 'https://news.google.com', domain: 'news.google.com' },
-  { name: 'Sheets', url: 'https://sheets.google.com', domain: 'sheets.google.com' },
-  { name: 'Translate', url: 'https://translate.google.com', domain: 'translate.google.com' },
-  { name: 'Meet', url: 'https://meet.google.com', domain: 'meet.google.com' },
-  { name: 'Chat', url: 'https://chat.google.com', domain: 'chat.google.com' },
-  { name: 'Play', url: 'https://play.google.com', domain: 'play.google.com' },
-  { name: 'Search', url: 'https://google.com', domain: 'google.com' },
-  { name: 'Ad Center', url: 'https://myadcenter.google.com', domain: 'myadcenter.google.com' },
-  { name: 'Shopping', url: 'https://shopping.google.com', domain: 'shopping.google.com' },
-  { name: 'Business', url: 'https://business.google.com', domain: 'business.google.com' },
-  { name: 'Docs', url: 'https://docs.google.com', domain: 'docs.google.com' },
-  { name: 'Slides', url: 'https://slides.google.com', domain: 'slides.google.com' },
-  { name: 'Forms', url: 'https://docs.google.com/forms', domain: 'docs.google.com' },
-  { name: 'Finance', url: 'https://finance.google.com', domain: 'finance.google.com' },
-  { name: 'Keep', url: 'https://keep.google.com', domain: 'keep.google.com' },
-  { name: 'Passwords', url: 'https://passwords.google.com', domain: 'passwords.google.com' },
-  { name: 'Google Ads', url: 'https://ads.google.com', domain: 'ads.google.com' },
-  { name: 'Google One', url: 'https://one.google.com', domain: 'one.google.com' },
-  { name: 'Travel', url: 'https://travel.google.com', domain: 'travel.google.com' },
-  { name: 'Analytics', url: 'https://analytics.google.com', domain: 'analytics.google.com' },
-  { name: 'Books', url: 'https://play.google.com/books', domain: 'play.google.com' },
-  { name: 'Classroom', url: 'https://classroom.google.com', domain: 'classroom.google.com' },
-  { name: 'Earth', url: 'https://earth.google.com', domain: 'earth.google.com' },
-  { name: 'Blogger', url: 'https://www.blogger.com', domain: 'www.blogger.com' },
-  { name: 'Saved', url: 'https://www.google.com/saved', domain: 'google.com' },
-  { name: 'Arts', url: 'https://artsandculture.google.com', domain: 'artsandculture.google.com' },
-  { name: 'Web Store', url: 'https://chrome.google.com/webstore', domain: 'chrome.google.com' }
+const DEFAULT_ALL_APPS = [
+  { id: 1, name: 'YouTube', url: 'https://youtube.com' },
+  { id: 2, name: 'Gmail', url: 'https://mail.google.com' },
+  { id: 3, name: 'ChatGPT', url: 'https://chat.openai.com' },
+  { id: 4, name: 'Gemini', url: 'https://gemini.google.com' },
+  { id: 5, name: 'Drive', url: 'https://drive.google.com' },
+  { id: 6, name: 'Maps', url: 'https://maps.google.com' },
+  { id: 7, name: 'Photos', url: 'https://photos.google.com' },
+  { id: 8, name: 'Calendar', url: 'https://calendar.google.com' }
 ];
+
+let allApps = [...DEFAULT_ALL_APPS];
 
 // Weather icons
 const weatherIcons = {
@@ -1993,7 +1965,9 @@ function mapOptionsSettingsToNewtab(storeSettings) {
   if (typeof s.useGPS === 'boolean') out.useGPS = s.useGPS;
 
   // Dock
-  if (typeof s.showDock === 'boolean') out.showGoogleApps = s.showDock;
+  if (typeof s.showDock === 'boolean') out.showAllApps = s.showDock;
+  if (typeof s.showAiTools === 'boolean') out.showAiTools = s.showAiTools;
+  if (typeof s.showCustomDock === 'boolean') out.showCustomDock = s.showCustomDock;
   if (typeof s.adaptiveIcons === 'boolean') out.adaptiveIcons = s.adaptiveIcons;
   if (typeof s.dockPosition === 'string') out.dockPosition = s.dockPosition;
   if (typeof s.showTodoWidget === 'boolean') out.showTodoWidget = s.showTodoWidget;
@@ -2038,7 +2012,9 @@ function mapNewtabSettingsToOptionsSchema(newtabSettings) {
   if (typeof s.weatherApiKey === 'string') out.weatherApiKey = s.weatherApiKey;
   if (typeof s.useGPS === 'boolean') out.useGPS = s.useGPS;
 
-  if (typeof s.showGoogleApps === 'boolean') out.showDock = s.showGoogleApps;
+  if (typeof s.showAllApps === 'boolean') out.showDock = s.showAllApps;
+  if (typeof s.showAiTools === 'boolean') out.showAiTools = s.showAiTools;
+  if (typeof s.showCustomDock === 'boolean') out.showCustomDock = s.showCustomDock;
   if (typeof s.adaptiveIcons === 'boolean') out.adaptiveIcons = s.adaptiveIcons;
   if (typeof s.dockPosition === 'string') out.dockPosition = s.dockPosition;
   if (typeof s.showTodoWidget === 'boolean') out.showTodoWidget = s.showTodoWidget;
@@ -2102,13 +2078,21 @@ async function loadSettings() {
     } else {
       customAiTools = sanitizeAiTools(customAiTools);
     }
+
+    // Load All Apps
+    const savedAllApps = localStorage.getItem('allApps');
+    if (savedAllApps) {
+      allApps = sanitizeAllApps(JSON.parse(savedAllApps));
+    } else {
+      allApps = sanitizeAllApps(allApps);
+    }
   } catch (e) {
     console.error('Error loading settings:', e);
   }
 
   // Merge in Options/settingsStore.js settings (chrome.storage.local)
   try {
-    const { settings: storedSettings, dockApps, aiTools, wallpaper, [GEOLOCATION_TOGGLE_KEY]: storedUseGeolocation } = await storageLocalGet(['settings', 'dockApps', 'aiTools', 'wallpaper', GEOLOCATION_TOGGLE_KEY]);
+    const { settings: storedSettings, dockApps, aiTools, allApps: storedAllApps, wallpaper, [GEOLOCATION_TOGGLE_KEY]: storedUseGeolocation } = await storageLocalGet(['settings', 'dockApps', 'aiTools', 'allApps', 'wallpaper', GEOLOCATION_TOGGLE_KEY]);
 
     const hasStoredSettings = !!storedSettings;
 
@@ -2133,6 +2117,10 @@ async function loadSettings() {
       settings.wallpaper = sanitizeWallpaperValue(wallpaper) || '';
     }
 
+    if (storedAllApps) {
+      allApps = sanitizeAllApps(storedAllApps);
+    }
+
     // If the user has v1 localStorage settings but the Options store isn't seeded yet,
     // write a merged settings object so Options pages reflect current behavior.
     if (hadLocalSettings && !hasStoredSettings) {
@@ -2141,6 +2129,7 @@ async function loadSettings() {
       await storageLocalSet({
         settings: { ...safeExisting, ...patch },
         [GEOLOCATION_TOGGLE_KEY]: !!settings.useGPS,
+        allApps: allApps.map(a => ({ id: a.id, name: a.name, url: a.url }))
       });
     }
   } catch (e) {
@@ -2212,7 +2201,7 @@ function sanitizeDockApps(input) {
     out.push(next);
   });
 
-  return out.length ? out : fallback;
+  return out;
 }
 
 function sanitizeEnglishVoiceLanguage(value, fallback = 'auto') {
@@ -2275,7 +2264,7 @@ function sanitizeLoadedSettings(input) {
     useGPS: sanitizeBool(i.useGPS, DEFAULT_SETTINGS.useGPS),
     weatherApiKey: sanitizeStr(i.weatherApiKey, INPUT_LIMITS.weatherApiKey, DEFAULT_SETTINGS.weatherApiKey),
 
-    showGoogleApps: sanitizeBool(i.showGoogleApps, DEFAULT_SETTINGS.showGoogleApps),
+    showAllApps: sanitizeBool(i.showAllApps, DEFAULT_SETTINGS.showAllApps),
     adaptiveIcons: sanitizeBool(i.adaptiveIcons, DEFAULT_SETTINGS.adaptiveIcons),
     showTodoWidget: sanitizeBool(i.showTodoWidget, DEFAULT_SETTINGS.showTodoWidget),
     showStickyNotes: sanitizeBool(i.showStickyNotes, DEFAULT_SETTINGS.showStickyNotes),
@@ -2286,6 +2275,7 @@ function sanitizeLoadedSettings(input) {
     wallpaperBlur: clampNum(i.wallpaperBlur, 0, 20, DEFAULT_SETTINGS.wallpaperBlur),
     wallpaperDim: clampNum(i.wallpaperDim, 0, 50, DEFAULT_SETTINGS.wallpaperDim),
     showAiTools: sanitizeBool(i.showAiTools, DEFAULT_SETTINGS.showAiTools),
+    showCustomDock: sanitizeBool(i.showCustomDock, DEFAULT_SETTINGS.showCustomDock),
 
     // wallpaper is stored separately in chrome.storage.local
   };
@@ -2384,6 +2374,29 @@ function applyAiToolsVisibility() {
   aiTools.style.display = settings.showAiTools ? 'block' : 'none';
 }
 
+function applyAllAppsVisibility() {
+  const dockContainer = document.querySelector('.dock-container');
+  if (dockContainer) {
+    dockContainer.style.display = settings.showAllApps ? 'flex' : 'none';
+  }
+}
+
+function applyDockVisibility() {
+  const dock = document.getElementById('appDock');
+  if (!dock) return;
+  
+  const divider = dock.querySelector('.dock-divider');
+  const hasCustomApps = customDockApps.length > 0;
+  const showCustom = !!settings.showCustomDock && hasCustomApps;
+
+  if (divider) {
+    divider.style.display = showCustom ? 'block' : 'none';
+  }
+
+  // Toggle outer box (glass-card background)
+  dock.classList.toggle('dock-minimal', !showCustom);
+}
+
 // Apply all visual settings
 function applyAllSettings() {
   // Centered layout logic: center Weather/Search if Clock & Greeting are both hidden
@@ -2422,6 +2435,8 @@ function applyAllSettings() {
   // Microphone visibility
   applyMicVisibility();
   applyAiToolsVisibility();
+  applyDockVisibility();
+  applyAllAppsVisibility();
 
   const voiceLanguageSelect = document.getElementById('voiceLanguageSelect');
   if (voiceLanguageSelect) {
@@ -2458,12 +2473,6 @@ function applyAllSettings() {
   const weatherCard = document.getElementById('weatherCard');
   if (weatherCard) {
     weatherCard.style.display = settings.showWeather ? 'flex' : 'none';
-  }
-  
-  // Dock visibility
-  const dockContainer = document.querySelector('.dock-container');
-  if (dockContainer) {
-    dockContainer.style.display = settings.showGoogleApps ? 'flex' : 'none';
   }
   
   // Apply dock position
@@ -4059,6 +4068,11 @@ function renderDock() {
   const existingApps = dock.querySelectorAll('.dock-app');
   existingApps.forEach(app => app.remove());
   
+  if (!settings.showCustomDock) {
+    applyDockVisibility();
+    return;
+  }
+
   // Only render custom dock apps (user controlled)
   customDockApps.forEach(app => {
     const link = document.createElement('a');
@@ -4082,6 +4096,8 @@ function renderDock() {
     link.appendChild(img);
     dock.appendChild(link);
   });
+
+  applyDockVisibility();
 }
 
 function initAppsGrid() {
@@ -4991,9 +5007,9 @@ function initSettingsControls() {
     applyStickyNotesUiState();
   });
   
-  initToggle('toggleGoogleApps', 'showGoogleApps', () => {
+  initToggle('toggleAllApps', 'showAllApps', () => {
     const dockContainer = document.querySelector('.dock-container');
-    if (dockContainer) dockContainer.style.display = settings.showGoogleApps ? 'flex' : 'none';
+    if (dockContainer) dockContainer.style.display = settings.showAllApps ? 'flex' : 'none';
   });
   
   initToggle('toggleAdaptiveIcons', 'adaptiveIcons', applyAdaptiveIcons);
@@ -5007,6 +5023,7 @@ function initSettingsControls() {
   // Initialize custom dock apps UI
   initDockAppsSettings();
   initAiToolsSettings();
+  initAllAppsSettings();
   
   // ===== THEME =====
   const themeOptions = document.querySelectorAll('#themeSelector .theme-option');
@@ -5276,9 +5293,205 @@ function renderAiToolsSettings() {
   });
 }
 
+function initAllAppsSettings() {
+  const addBtn = document.getElementById('addAllApp');
+  if (addBtn && !addBtn.dataset.bound) {
+    addBtn.addEventListener('click', () => {
+      const newApp = {
+        id: Date.now(),
+        name: 'New App',
+        url: 'https://',
+      };
+      allApps.push(newApp);
+      saveAllApps();
+      renderAllAppsSettings();
+      initAppsGrid(); // Update actual modal grid
+    });
+    addBtn.dataset.bound = '1';
+  }
+
+  const toggleAllApps = document.getElementById('toggleAllApps');
+  if (toggleAllApps) {
+    toggleAllApps.checked = !!settings.showAllApps;
+    if (!toggleAllApps.dataset.bound) {
+      toggleAllApps.addEventListener('change', (e) => {
+        settings.showAllApps = e.target.checked;
+        saveSettings();
+        applyAllAppsVisibility();
+      });
+      toggleAllApps.dataset.bound = '1';
+    }
+  }
+
+  renderAllAppsSettings();
+}
+
+function renderAllAppsSettings() {
+  const list = document.getElementById('allAppsList');
+  if (!list) return;
+
+  clearElement(list);
+  
+  if (allApps.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'dock-empty';
+    empty.textContent = 'No apps in grid. Click Add to create one.';
+    list.appendChild(empty);
+    return;
+  }
+
+  allApps.forEach((app, index) => {
+    const item = document.createElement('div');
+    item.className = 'dock-app-item ai-tool-settings-item';
+    item.dataset.id = String(app.id);
+
+    // Left: Icon Preview
+    const iconWrap = document.createElement('div');
+    iconWrap.className = 'dock-app-icon';
+    const img = document.createElement('img');
+    img.alt = app.name || '';
+    iconWrap.appendChild(img);
+    item.appendChild(iconWrap);
+
+    attachIconFallback(img, getFaviconCandidates(app.url), {
+      name: app.name,
+      cacheHost: getHostnameFromAnyUrl(app.url) || '',
+    });
+
+    // Middle: Inputs
+    const inputs = document.createElement('div');
+    inputs.className = 'dock-app-inputs';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'dock-app-name';
+    nameInput.value = app.name || '';
+    nameInput.dataset.id = String(app.id);
+    nameInput.dataset.field = 'name';
+    nameInput.placeholder = 'App name';
+    nameInput.maxLength = INPUT_LIMITS.dockAppName;
+
+    const urlInput = document.createElement('input');
+    urlInput.type = 'text';
+    urlInput.className = 'dock-app-url';
+    urlInput.value = app.url || '';
+    urlInput.dataset.id = String(app.id);
+    urlInput.dataset.field = 'url';
+    urlInput.placeholder = 'https://example.com';
+    urlInput.maxLength = INPUT_LIMITS.dockAppUrl;
+
+    inputs.appendChild(nameInput);
+    inputs.appendChild(urlInput);
+    item.appendChild(inputs);
+
+    // Right: Reorder & Delete
+    const actions = document.createElement('div');
+    actions.className = 'dock-app-actions ai-tool-actions';
+
+    const reorderWrap = document.createElement('div');
+    reorderWrap.className = 'ai-reorder-buttons';
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'ai-reorder-btn up';
+    upBtn.innerHTML = '▲';
+    upBtn.disabled = index === 0;
+    upBtn.addEventListener('click', () => {
+      if (index > 0) {
+        const temp = allApps[index];
+        allApps[index] = allApps[index - 1];
+        allApps[index - 1] = temp;
+        saveAllApps();
+        initAppsGrid();
+        renderAllAppsSettings();
+      }
+    });
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'ai-reorder-btn down';
+    downBtn.innerHTML = '▼';
+    downBtn.disabled = index === allApps.length - 1;
+    downBtn.addEventListener('click', () => {
+      if (index < allApps.length - 1) {
+        const temp = allApps[index];
+        allApps[index] = allApps[index + 1];
+        allApps[index + 1] = temp;
+        saveAllApps();
+        initAppsGrid();
+        renderAllAppsSettings();
+      }
+    });
+
+    reorderWrap.appendChild(upBtn);
+    reorderWrap.appendChild(downBtn);
+    actions.appendChild(reorderWrap);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'ai-delete-btn-minimal';
+    deleteBtn.dataset.id = String(app.id);
+    deleteBtn.title = 'Remove app from grid';
+    deleteBtn.type = 'button';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', () => {
+      allApps = allApps.filter(t => String(t.id) !== String(app.id));
+      saveAllApps();
+      initAppsGrid();
+      renderAllAppsSettings();
+    });
+
+    item.appendChild(actions);
+    item.appendChild(deleteBtn);
+    list.appendChild(item);
+
+    // Event listeners for inputs
+    const saveOnInput = (e) => {
+      const field = e.target.dataset.field;
+      const id = e.target.dataset.id;
+      const a = allApps.find(x => String(x.id) === String(id));
+      if (a) {
+        a[field] = e.target.value;
+        // debounce save
+        clearTimeout(a._saveTimer);
+        a._saveTimer = setTimeout(() => {
+          saveAllApps();
+          initAppsGrid();
+        }, 800);
+      }
+    };
+
+    nameInput.addEventListener('input', saveOnInput);
+    urlInput.addEventListener('input', saveOnInput);
+  });
+}
+
+function saveAllApps() {
+  const data = allApps.map(a => ({
+    id: a.id,
+    name: a.name,
+    url: a.url
+  }));
+  localStorage.setItem('allApps', JSON.stringify(data));
+  if (window.chrome && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.set({ allApps: data });
+  }
+}
+
+function sanitizeAllApps(input) {
+  if (!Array.isArray(input)) return [...DEFAULT_ALL_APPS];
+  const out = [];
+  input.slice(0, 50).forEach((raw, index) => {
+    if (!isPlainObject(raw)) return;
+    const idNum = Number(raw.id);
+    const id = Number.isFinite(idNum) ? idNum : (index + 1);
+    const name = (typeof raw.name === 'string' ? raw.name : '').replace(/<[^>]*>/g, '').trim().slice(0, INPUT_LIMITS.dockAppName) || 'App';
+    const rawUrl = (typeof raw.url === 'string' ? raw.url : '').trim().slice(0, INPUT_LIMITS.dockAppUrl);
+    const url = normalizeUrlForFavicon(rawUrl) || '';
+    out.push({ id, name, url });
+  });
+  return out;
+}
+
 function initDockAppsSettings() {
   const addBtn = document.getElementById('addDockApp');
-  const iconInput = document.getElementById('dockIconInput');
   const positionSelect = document.getElementById('dockPosition');
   
   // Initialize position select (guard against duplicate listeners)
@@ -5315,9 +5528,18 @@ function initDockAppsSettings() {
     addBtn.dataset.bound = '1';
   }
   
-  if (iconInput && !iconInput.dataset.bound) {
-    iconInput.addEventListener('change', handleDockIconUpload);
-    iconInput.dataset.bound = '1';
+  const toggleCustomDock = document.getElementById('toggleCustomDock');
+  if (toggleCustomDock) {
+    toggleCustomDock.checked = !!settings.showCustomDock;
+    if (!toggleCustomDock.dataset.bound) {
+      toggleCustomDock.addEventListener('change', (e) => {
+        settings.showCustomDock = e.target.checked;
+        saveSettings();
+        applyDockVisibility();
+        renderDock();
+      });
+      toggleCustomDock.dataset.bound = '1';
+    }
   }
   
   renderDockAppsSettings();
@@ -5337,17 +5559,25 @@ function renderDockAppsSettings() {
     return;
   }
 
-  customDockApps.forEach(app => {
+  customDockApps.forEach((app, index) => {
     const item = document.createElement('div');
-    item.className = 'dock-app-item';
+    item.className = 'dock-app-item ai-tool-settings-item';
     item.dataset.id = String(app.id);
 
+    // Left: Icon Preview
     const iconWrap = document.createElement('div');
     iconWrap.className = 'dock-app-icon';
     const img = document.createElement('img');
     img.alt = app.name || '';
     iconWrap.appendChild(img);
+    item.appendChild(iconWrap);
 
+    attachIconFallback(img, getFaviconCandidates(app.url), {
+      name: app.name,
+      cacheHost: getHostnameFromAnyUrl(app.url) || '',
+    });
+
+    // Middle: Inputs
     const inputs = document.createElement('div');
     inputs.className = 'dock-app-inputs';
 
@@ -5358,7 +5588,6 @@ function renderDockAppsSettings() {
     nameInput.dataset.id = String(app.id);
     nameInput.dataset.field = 'name';
     nameInput.placeholder = 'App name';
-    nameInput.name = `dock-app-name-${app.id}`;
     nameInput.maxLength = INPUT_LIMITS.dockAppName;
 
     const urlInput = document.createElement('input');
@@ -5368,154 +5597,92 @@ function renderDockAppsSettings() {
     urlInput.dataset.id = String(app.id);
     urlInput.dataset.field = 'url';
     urlInput.placeholder = 'https://example.com';
-    urlInput.name = `dock-app-url-${app.id}`;
     urlInput.maxLength = INPUT_LIMITS.dockAppUrl;
 
     inputs.appendChild(nameInput);
     inputs.appendChild(urlInput);
+    item.appendChild(inputs);
 
+    // Right: Reorder & Delete
     const actions = document.createElement('div');
-    actions.className = 'dock-app-actions';
+    actions.className = 'dock-app-actions ai-tool-actions';
 
-    const uploadBtn = document.createElement('button');
-    uploadBtn.className = 'dock-upload-btn';
-    uploadBtn.dataset.id = String(app.id);
-    uploadBtn.title = 'Upload custom icon';
-    uploadBtn.type = 'button';
-    uploadBtn.textContent = 'Icon';
+    const reorderWrap = document.createElement('div');
+    reorderWrap.className = 'ai-reorder-buttons';
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'ai-reorder-btn up';
+    upBtn.innerHTML = '▲';
+    upBtn.disabled = index === 0;
+    upBtn.addEventListener('click', () => {
+      if (index > 0) {
+        const temp = customDockApps[index];
+        customDockApps[index] = customDockApps[index - 1];
+        customDockApps[index - 1] = temp;
+        saveDockApps();
+        renderDock();
+        renderDockAppsSettings();
+      }
+    });
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'ai-reorder-btn down';
+    downBtn.innerHTML = '▼';
+    downBtn.disabled = index === customDockApps.length - 1;
+    downBtn.addEventListener('click', () => {
+      if (index < customDockApps.length - 1) {
+        const temp = customDockApps[index];
+        customDockApps[index] = customDockApps[index + 1];
+        customDockApps[index + 1] = temp;
+        saveDockApps();
+        renderDock();
+        renderDockAppsSettings();
+      }
+    });
+
+    reorderWrap.appendChild(upBtn);
+    reorderWrap.appendChild(downBtn);
+    actions.appendChild(reorderWrap);
 
     const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'dock-delete-btn';
+    deleteBtn.className = 'ai-delete-btn-minimal';
     deleteBtn.dataset.id = String(app.id);
-    deleteBtn.title = 'Delete app';
+    deleteBtn.title = 'Remove dock app';
     deleteBtn.type = 'button';
-    const trashSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    trashSvg.setAttribute('viewBox', '0 0 24 24');
-    trashSvg.setAttribute('fill', 'none');
-    trashSvg.setAttribute('stroke', 'currentColor');
-    trashSvg.setAttribute('stroke-width', '2');
-    const trashPoly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-    trashPoly.setAttribute('points', '3 6 5 6 21 6');
-    const trashPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    trashPath.setAttribute('d', 'M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2');
-    trashSvg.appendChild(trashPoly);
-    trashSvg.appendChild(trashPath);
-    deleteBtn.appendChild(trashSvg);
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', () => {
+      customDockApps = customDockApps.filter(t => String(t.id) !== String(app.id));
+      saveDockApps();
+      renderDock();
+      renderDockAppsSettings();
+    });
 
-    actions.appendChild(uploadBtn);
-    actions.appendChild(deleteBtn);
-
-    item.appendChild(iconWrap);
-    item.appendChild(inputs);
     item.appendChild(actions);
+    item.appendChild(deleteBtn);
     list.appendChild(item);
 
-    // Resolve icons with full fallback chain
-    const safeIcon = sanitizeIconValue(app.icon);
-    attachIconFallback(img, safeIcon ? [safeIcon] : getFaviconCandidates(app.url), {
-      cacheHost: getHostnameFromAnyUrl(app.url) || '',
-      name: app.name || '',
-    });
+    // Event listeners for inputs
+    const saveOnInput = (e) => {
+      const field = e.target.dataset.field;
+      const id = e.target.dataset.id;
+      const a = customDockApps.find(x => String(x.id) === String(id));
+      if (a) {
+        a[field] = e.target.value;
+        // debounce save
+        clearTimeout(a._saveTimer);
+        a._saveTimer = setTimeout(() => {
+          saveDockApps();
+          renderDock();
+        }, 800);
+      }
+    };
+
+    nameInput.addEventListener('input', saveOnInput);
+    urlInput.addEventListener('input', saveOnInput);
   });
-
-  if (!list.dataset.bound) {
-    list.addEventListener('change', (e) => {
-      const target = e.target;
-      if (!(target instanceof HTMLInputElement)) return;
-      const id = Number(target.dataset.id);
-      const field = target.dataset.field;
-      if (!Number.isFinite(id) || !field) return;
-      const app = customDockApps.find(a => a.id === id);
-      if (!app) return;
-
-      if (field === 'name') {
-        const sanitized = sanitizeText(target.value, INPUT_LIMITS.dockAppName);
-        if (target.value.trim().length > INPUT_LIMITS.dockAppName) {
-          showInputError(target, `Name too long (max ${INPUT_LIMITS.dockAppName} chars).`);
-        }
-        app.name = sanitized;
-        target.value = sanitized; // reflect trimmed value
-      }
-      if (field === 'url') {
-        const rawValue = target.value.trim().slice(0, INPUT_LIMITS.dockAppUrl);
-        const urlResult = validateUrl(rawValue);
-        if (!urlResult.valid && rawValue) {
-          showInputError(target, urlResult.message);
-          app.url = collapseRepeatedProtocolPrefix(rawValue);
-          target.value = app.url;
-        } else if (urlResult.valid) {
-          app.url = urlResult.url;
-          target.value = urlResult.url;
-        } else {
-          app.url = '';
-          target.value = '';
-        }
-        delete app.domain;
-      }
-      saveDockApps();
-      renderDock();
-      renderDockAppsSettings();
-    });
-
-    list.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (!btn || !list.contains(btn)) return;
-      const id = Number(btn.dataset.id);
-      if (!Number.isFinite(id)) return;
-
-      if (btn.classList.contains('dock-upload-btn')) {
-        currentEditingDockAppId = id;
-        document.getElementById('dockIconInput').click();
-      }
-      if (btn.classList.contains('dock-delete-btn')) {
-        customDockApps = customDockApps.filter(a => a.id !== id);
-        saveDockApps();
-        renderDockAppsSettings();
-        renderDock();
-      }
-    });
-
-    list.dataset.bound = '1';
-  }
 }
 
-function handleDockIconUpload(e) {
-  const file = e.target.files[0];
-  if (!file || !currentEditingDockAppId) return;
-  
-  // Validate file type and size
-  const validation = validateFileUpload(file, {
-    allowedTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/x-icon'],
-    maxBytes: INPUT_LIMITS.maxIconBytes,
-    label: 'Icon'
-  });
-  if (!validation.valid) {
-    alert(validation.message);
-    e.target.value = '';
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = (event) => {
-    const app = customDockApps.find(a => a.id === currentEditingDockAppId);
-    if (app) {
-      // Sanitize the data URL before saving
-      const sanitized = sanitizeIconValue(event.target.result);
-      if (!sanitized) {
-        alert('Invalid icon format. Please use PNG, JPG, WebP, or GIF.');
-        currentEditingDockAppId = null;
-        return;
-      }
-      app.icon = sanitized;
-      saveDockApps();
-      renderDockAppsSettings();
-      renderDock();
-    }
-    currentEditingDockAppId = null;
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-}
+
 
 function getDomainFromUrl(url) {
   try {

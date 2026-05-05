@@ -656,11 +656,32 @@
         </div>
         <div class="setting-item">
           <div class="setting-info">
-            <span class="setting-title">Show Google Apps</span>
-            <span class="setting-desc">Display dock with Google apps</span>
+            <span class="setting-title">Show AI Tools</span>
+            <span class="setting-desc">Display radial menu with custom AI tools</span>
           </div>
           <label class="toggle-switch">
-            <input type="checkbox" id="toggleGoogleApps" name="toggleGoogleApps" checked>
+            <input type="checkbox" id="toggleAiTools" name="toggleAiTools" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show All Apps</span>
+            <span class="setting-desc">Display dock with your custom app grid</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleAllApps" name="toggleAllApps" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <span class="setting-title">Show Custom Dock</span>
+            <span class="setting-desc">Display your personalized app dock</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleCustomDock" name="toggleCustomDock" checked>
             <span class="toggle-slider"></span>
           </label>
         </div>
@@ -686,17 +707,6 @@
           </select>
         </div>
 
-        <!-- Custom Dock Apps -->
-        <div class="setting-subsection">
-          <div class="subsection-header">
-            <span class="setting-title">Custom Dock Apps</span>
-            <button class="add-dock-btn" id="addDockApp" aria-label="Add dock app">Add</button>
-          </div>
-          <div class="dock-apps-list" id="dockAppsList">
-            <!-- Dynamic dock apps will be rendered here -->
-          </div>
-        </div>
-
         <!-- Custom AI Tools -->
         <div class="setting-subsection">
           <div class="subsection-header">
@@ -705,6 +715,36 @@
           </div>
           <div class="dock-apps-list" id="aiToolsList">
             <!-- Dynamic AI tools will be rendered here -->
+          </div>
+        </div>
+
+        <!-- All Apps Section -->
+        <div class="setting-subsection">
+          <div class="subsection-header">
+            <div class="setting-info">
+              <span class="setting-title">All Apps Grid</span>
+            </div>
+            <div class="subsection-controls">
+              <button class="add-dock-btn" id="addAllApp" aria-label="Add grid app">Add</button>
+            </div>
+          </div>
+          <div class="dock-apps-list" id="allAppsList">
+            <!-- Dynamic all apps will be rendered here -->
+          </div>
+        </div>
+
+        <!-- Custom Dock Apps -->
+        <div class="setting-subsection">
+          <div class="subsection-header">
+            <div class="setting-info">
+              <span class="setting-title">Custom Dock Apps</span>
+            </div>
+            <div class="subsection-controls">
+              <button class="add-dock-btn" id="addDockApp" aria-label="Add dock app">Add</button>
+            </div>
+          </div>
+          <div class="dock-apps-list" id="dockAppsList">
+            <!-- Dynamic dock apps will be rendered here -->
           </div>
         </div>
       </div>
@@ -914,7 +954,7 @@
 
   <input type="file" id="wallpaperInput" name="wallpaperInput" accept="image/*" hidden>
   <input type="file" id="restoreInput" name="restoreInput" accept=".json" hidden>
-  <input type="file" id="dockIconInput" name="dockIconInput" accept="image/*" hidden>
+
 
   <script src="newtab.js"></script>
 </body>

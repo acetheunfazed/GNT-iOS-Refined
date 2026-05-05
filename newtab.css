@@ -3348,6 +3348,20 @@ body.reduce-motion .dock-container.dock-preload {
   overflow: hidden;
 }
 
+.dock.dock-minimal {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  border-radius: 12px !important; /* Force the container to be a squircle too */
+}
+
+.dock.dock-minimal::before {
+  display: none;
+}
+
 /* Cute shimmer effect on dock */
 .dock::before {
   content: '';
@@ -3436,7 +3450,7 @@ body.reduce-motion .dock-container.dock-preload {
   width: 46px;
   height: 46px;
   border: none;
-  border-radius: 12px;
+  border-radius: 12px !important;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(30px) saturate(150%);
   -webkit-backdrop-filter: blur(30px) saturate(150%);
@@ -3676,6 +3690,7 @@ body.reduce-motion .apps-modal.active {
   -webkit-backdrop-filter: blur(40px) saturate(150%);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 18px;
+  margin-top: 12px;
   box-shadow: 
     0 4px 20px rgba(0,0,0,0.15),
     inset 0 1px 0 rgba(255,255,255,0.15);
