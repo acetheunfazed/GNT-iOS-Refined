@@ -69,7 +69,7 @@ This extension is **privacy-first** by design:
 - **Storage API** — Stores your preferences locally on your device
 - **Weather Services** — Third-party services (Open-Meteo, WeatherAPI) only receive anonymized coordinates when you enable weather
 
-See [privacy.html](https://acetheunfazed.github.io/GNT-iOS-Refined/privacy.html) for detailed privacy policy.
+See [Privacy Policy](https://acetheunfazed.github.io/GNT-iOS-Refined/privacy.html) for detailed privacy policy.
 
 ## ⚙️ Configuration
 
