@@ -139,6 +139,7 @@ All settings saved in `chrome.storage.local`:
 │       └── icon-128.png
 
 ├── early-theme.js               # Theme initialization (pre-load)
+├── LICENSE                      # Project license file
 └── README.md                    # Project documentation
 ```
 
