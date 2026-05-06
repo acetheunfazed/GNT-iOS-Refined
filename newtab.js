@@ -118,6 +118,21 @@ const weatherIcons = {
   'wind': '💨', 'windy': '💨'
 };
 
+function resolveAssetUrl(path) {
+  try {
+    if (typeof chrome !== 'undefined' && chrome.runtime && typeof chrome.runtime.getURL === 'function') {
+      return chrome.runtime.getURL(path);
+    }
+  } catch {
+    // ignore
+  }
+  return path;
+}
+
+const WEATHER_ICON_ASSETS = {
+  partlyCloudyNight: resolveAssetUrl('assets/icons/partly-cloud-night.png')
+};
+
 const DEFAULT_ENGINE_ICON_LIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666B74' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7.5'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E";
 const DEFAULT_ENGINE_ICON_DARK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F1F5FD' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7.5'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E";
 
@@ -1758,7 +1773,8 @@ function renderAiToolsMenu() {
     item.appendChild(img);
     menu.appendChild(item);
 
-    attachIconFallback(img, getFaviconCandidates(tool.url), {
+    const candidates = tool.iconUrl ? [tool.iconUrl, ...getFaviconCandidates(tool.url)] : getFaviconCandidates(tool.url);
+    attachIconFallback(img, candidates, {
       name: tool.name,
       cacheHost: getHostnameFromAnyUrl(tool.url) || '',
     });
@@ -2045,7 +2061,8 @@ function sanitizeAiTools(tools) {
   return tools.map(t => ({
     id: t.id || Date.now() + Math.random(),
     name: String(t.name || 'New AI Tool').substring(0, 50),
-    url: String(t.url || '').substring(0, 500)
+    url: String(t.url || '').substring(0, 500),
+    iconUrl: sanitizeIconValue(t.iconUrl)
   })).filter(t => t.url);
 }
 
@@ -3578,7 +3595,7 @@ function normalizeConditionToIcon(conditionText, isDay = null) {
   // (We intentionally keep rain/snow/fog/thunder icons the same day/night.)
   if (isDay === false) {
     if (normalized.includes('clear') || normalized.includes('sun')) return '🌙';
-    if (normalized.includes('partly cloudy') || normalized.includes('mostly clear')) return '🌙☁️';
+    if (normalized.includes('partly cloudy') || normalized.includes('mostly clear')) return WEATHER_ICON_ASSETS.partlyCloudyNight;
     if (normalized.includes('cloud') || normalized.includes('overcast')) return '☁️';
   }
 
@@ -3593,7 +3610,7 @@ function normalizeConditionToIcon(conditionText, isDay = null) {
   if (normalized.includes('fog') || normalized.includes('mist') || normalized.includes('haze')) return '🌫️';
   if (normalized.includes('overcast')) return '☁️';
   if (normalized.includes('cloud')) {
-    if (isDay === false) return '🌙☁️';
+    if (isDay === false) return '☁️';
     return '⛅';
   }
   if (normalized.includes('clear') || normalized.includes('sun')) {
@@ -3602,6 +3619,25 @@ function normalizeConditionToIcon(conditionText, isDay = null) {
   }
   if (normalized.includes('wind')) return '💨';
   return '🌡️';
+}
+
+function setWeatherIcon(icon) {
+  const iconEl = document.getElementById('weatherIcon');
+  if (!iconEl) return;
+  iconEl.innerHTML = '';
+
+  if (typeof icon === 'string' && /^(\/|https?:\/\/)/.test(icon)) {
+    const img = document.createElement('img');
+    img.src = icon;
+    img.alt = 'Weather icon';
+    img.onerror = () => {
+      iconEl.textContent = '🌙';
+    };
+    iconEl.appendChild(img);
+    return;
+  }
+
+  iconEl.textContent = icon || '🌡️';
 }
 
 // Cache for reverse geocode results to avoid repeated API calls
@@ -3722,7 +3758,7 @@ function renderWeather({ tempC, feelsC, humidity, conditionText, locationText, i
       // Only override for sky-condition icons; keep rain/snow/etc unchanged.
       if (!isDay) {
         if (baseIcon === '☀️' || baseIcon === '🌤️' || baseIcon === '🌥️') return '🌙';
-        if (baseIcon === '⛅') return '🌙☁️';
+        if (baseIcon === '⛅') return WEATHER_ICON_ASSETS.partlyCloudyNight;
       }
       return baseIcon;
     }
@@ -3734,7 +3770,7 @@ function renderWeather({ tempC, feelsC, humidity, conditionText, locationText, i
   if (locationEl) locationEl.textContent = locationText || '';
   document.getElementById('weatherHumidity').textContent = `💧 ${Math.round(humidity)}%`;
   document.getElementById('weatherFeels').textContent = `🌡️ ${Math.round(feels)}°`;
-  document.getElementById('weatherIcon').textContent = resolvedIcon || '🌡️';
+  setWeatherIcon(resolvedIcon || '🌡️');
 
   saveLastWeather({ tempC, feelsC, humidity, conditionText, locationText, icon: resolvedIcon, localtimeEpochSec, tzId, isDay });
 
@@ -3882,7 +3918,7 @@ async function fetchWeatherFromOpenMeteo(query) {
       icon = '🌙';
     }
     if (weatherCode === 2 && icon === '⛅') {
-      icon = '🌙☁️';
+      icon = WEATHER_ICON_ASSETS.partlyCloudyNight;
     }
   }
 
@@ -3987,15 +4023,18 @@ function updateWeatherUI(data, locationName, country) {
   const feels = settings.useFahrenheit ? (feelsC * 9/5) + 32 : feelsC;
   
   const weatherCode = current.weather_code;
-  const condition = weatherConditions[weatherCode] || { text: 'Unknown', icon: '🌡️' };
-  
+  let condition = weatherConditions[weatherCode] || { text: 'Unknown', icon: '🌡️' };
+
+  if (current.is_day === 0 && weatherCode === 2 && condition.icon === '⛅') {
+    condition = { ...condition, icon: WEATHER_ICON_ASSETS.partlyCloudyNight };
+  }
   document.getElementById('tempValue').textContent = Math.round(temp);
   document.getElementById('weatherCondition').textContent = condition.text;
   const locationEl = document.getElementById('weatherLocationText');
   if (locationEl) locationEl.textContent = `${locationName}, ${country}`;
   document.getElementById('weatherHumidity').textContent = `💧 ${current.relative_humidity_2m}%`;
   document.getElementById('weatherFeels').textContent = `🌡️ ${Math.round(feels)}°`;
-  document.getElementById('weatherIcon').textContent = condition.icon;
+  setWeatherIcon(condition.icon);
 }
 
 function setSaveButtonFeedback(btn, { state, text, durationMs = 1200 } = {}) {
@@ -4135,9 +4174,10 @@ function initAppsGrid() {
     const img = document.createElement('img');
     img.alt = app.name;
     img.referrerPolicy = 'no-referrer';
-    attachIconFallback(img, getFaviconCandidates(app.url), {
-      cacheHost: getHostnameFromAnyUrl(app.url) || '',
+    const candidates = app.iconUrl ? [app.iconUrl, ...getFaviconCandidates(app.url)] : getFaviconCandidates(app.url);
+    attachIconFallback(img, candidates, {
       name: app.name || '',
+      cacheHost: getHostnameFromAnyUrl(app.url) || '',
     });
     iconWrap.appendChild(img);
 
@@ -5214,9 +5254,32 @@ function renderAiToolsSettings() {
     const img = document.createElement('img');
     img.alt = tool.name || '';
     iconWrap.appendChild(img);
+
+    const editOverlay = document.createElement('div');
+    editOverlay.className = 'edit-icon-overlay';
+    editOverlay.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+    editOverlay.title = 'Edit icon URL';
+    editOverlay.addEventListener('click', () => {
+      const newUrl = prompt('Enter custom icon URL (leave blank to auto-fetch):', tool.iconUrl || '');
+      if (newUrl !== null) {
+        const nextIconUrl = sanitizeIconValue(newUrl.trim());
+        tool.iconUrl = nextIconUrl;
+        if (!tool.iconUrl) {
+          const cache = loadFaviconCache();
+          const host = getHostnameFromAnyUrl(tool.url);
+          if (host) {
+            delete cache[host.toLowerCase()];
+            saveFaviconCache();
+          }
+        }
+        saveAiTools();
+      }
+    });
+    iconWrap.appendChild(editOverlay);
     item.appendChild(iconWrap);
 
-    attachIconFallback(img, getFaviconCandidates(tool.url), {
+    const candidates = tool.iconUrl ? [tool.iconUrl, ...getFaviconCandidates(tool.url)] : getFaviconCandidates(tool.url);
+    attachIconFallback(img, candidates, {
       name: tool.name,
       cacheHost: getHostnameFromAnyUrl(tool.url) || '',
     });
@@ -5377,9 +5440,39 @@ function renderAllAppsSettings() {
     const img = document.createElement('img');
     img.alt = app.name || '';
     iconWrap.appendChild(img);
+
+    const editOverlay = document.createElement('div');
+    editOverlay.className = 'edit-icon-overlay';
+    editOverlay.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+    editOverlay.title = 'Edit icon URL';
+    editOverlay.addEventListener('click', () => {
+      const newUrl = prompt('Enter custom icon URL (leave blank to auto-fetch):', app.iconUrl || '');
+      if (newUrl !== null) {
+        const nextIconUrl = sanitizeIconValue(newUrl.trim());
+        app.iconUrl = nextIconUrl;
+        if (!app.iconUrl) {
+          const cache = loadFaviconCache();
+          const host = getHostnameFromAnyUrl(app.url);
+          if (host) {
+            delete cache[host.toLowerCase()];
+            saveFaviconCache();
+          }
+        }
+        saveAllApps();
+        // Update the preview img
+        const candidates = app.iconUrl ? [app.iconUrl, ...getFaviconCandidates(app.url)] : getFaviconCandidates(app.url);
+        attachIconFallback(img, candidates, {
+          name: app.name,
+          cacheHost: getHostnameFromAnyUrl(app.url) || '',
+        });
+        initAppsGrid();
+      }
+    });
+    iconWrap.appendChild(editOverlay);
     item.appendChild(iconWrap);
 
-    attachIconFallback(img, getFaviconCandidates(app.url), {
+    const candidates = app.iconUrl ? [app.iconUrl, ...getFaviconCandidates(app.url)] : getFaviconCandidates(app.url);
+    attachIconFallback(img, candidates, {
       name: app.name,
       cacheHost: getHostnameFromAnyUrl(app.url) || '',
     });
@@ -5493,7 +5586,8 @@ function saveAllApps() {
   const data = allApps.map(a => ({
     id: a.id,
     name: a.name,
-    url: a.url
+    url: a.url,
+    iconUrl: a.iconUrl
   }));
   localStorage.setItem('allApps', JSON.stringify(data));
   if (window.chrome && chrome.storage && chrome.storage.local) {
@@ -5511,7 +5605,8 @@ function sanitizeAllApps(input) {
     const name = (typeof raw.name === 'string' ? raw.name : '').replace(/<[^>]*>/g, '').trim().slice(0, INPUT_LIMITS.dockAppName) || 'App';
     const rawUrl = (typeof raw.url === 'string' ? raw.url : '').trim().slice(0, INPUT_LIMITS.dockAppUrl);
     const url = normalizeUrlForFavicon(rawUrl) || '';
-    out.push({ id, name, url });
+    const iconUrl = sanitizeIconValue(raw.iconUrl);
+    out.push({ id, name, url, iconUrl });
   });
   return out;
 }
@@ -5596,9 +5691,39 @@ function renderDockAppsSettings() {
     const img = document.createElement('img');
     img.alt = app.name || '';
     iconWrap.appendChild(img);
+
+    const editOverlay = document.createElement('div');
+    editOverlay.className = 'edit-icon-overlay';
+    editOverlay.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+    editOverlay.title = 'Edit icon URL';
+    editOverlay.addEventListener('click', () => {
+      const newUrl = prompt('Enter custom icon URL (leave blank to auto-fetch):', app.icon || '');
+      if (newUrl !== null) {
+        const nextIcon = sanitizeIconValue(newUrl.trim());
+        app.icon = nextIcon;
+        if (!app.icon) {
+          const cache = loadFaviconCache();
+          const host = getHostnameFromAnyUrl(app.url);
+          if (host) {
+            delete cache[host.toLowerCase()];
+            saveFaviconCache();
+          }
+        }
+        saveDockApps();
+        // Update the preview img
+        const candidates = app.icon ? [app.icon, ...getFaviconCandidates(app.url)] : getFaviconCandidates(app.url);
+        attachIconFallback(img, candidates, {
+          name: app.name,
+          cacheHost: getHostnameFromAnyUrl(app.url) || '',
+        });
+        renderDock();
+      }
+    });
+    iconWrap.appendChild(editOverlay);
     item.appendChild(iconWrap);
 
-    attachIconFallback(img, getFaviconCandidates(app.url), {
+    const candidates = app.icon ? [app.icon, ...getFaviconCandidates(app.url)] : getFaviconCandidates(app.url);
+    attachIconFallback(img, candidates, {
       name: app.name,
       cacheHost: getHostnameFromAnyUrl(app.url) || '',
     });

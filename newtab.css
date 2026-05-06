@@ -2596,6 +2596,13 @@ body:has(.wallpaper.active) .user-name {
   line-height: 1;
 }
 
+.weather-icon img {
+  width: 1em;
+  height: 1em;
+  display: block;
+  object-fit: contain;
+}
+
 .weather-temp {
   display: flex;
   align-items: flex-start;
@@ -3424,6 +3431,8 @@ body.reduce-motion .dock-container.dock-preload {
 .dock-app img {
   width: 30px;
   height: 30px;
+  border-radius: 22.5%;
+  object-fit: cover;
   transition: transform 0.3s var(--spring-smooth);
   color: transparent;
   font-size: 0;
@@ -3472,6 +3481,8 @@ body.reduce-motion .dock-container.dock-preload {
 .show-all-apps svg {
   width: 20px;
   height: 20px;
+  border-radius: 22.5%;
+  object-fit: cover;
   transition: transform 0.3s var(--spring-smooth);
 }
 
@@ -3905,6 +3916,8 @@ body.reduce-motion .apps-modal.active {
 .app-icon img {
   width: 36px;
   height: 36px;
+  border-radius: 22.5%;
+  object-fit: cover;
   transition: transform 0.3s var(--spring-smooth);
   /* Hide alt text and broken-image icon while loading */
   color: transparent;
@@ -5427,6 +5440,7 @@ body.ui-scrolling .app-item:active {
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
 }
 
 .dock-app-icon img {
@@ -6386,3 +6400,21 @@ body.reduce-motion .welcome-gradient-bg {
 .welcome-message p:last-child {
   margin-bottom: 0;
 }
+.edit-icon-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+  border-radius: inherit;
+  color: white;
+}
+
+.dock-app-icon:hover .edit-icon-overlay {
+  opacity: 1;
+}
+
