@@ -38,7 +38,7 @@ Forked from "GNT: Glass New Tab – iOS Style Dashboard” by Animesh Patra. A p
    ```
 
 2. **Open Chrome Extensions**
-   - Navigate to `chrome://extensions/`
+   - Navigate to `chrome://extensions`
    - Enable **Developer mode** (top-right toggle)
 
 3. **Load unpacked extension**
@@ -153,7 +153,7 @@ All settings saved in `chrome.storage.local`:
 ### Local Development
 
 1. Make changes to source files
-2. In `chrome://extensions/`, click the refresh icon
+2. In `chrome://extensions`, click the refresh icon
 3. Test the extension with a new tab
 
 ### Building for Release
@@ -197,8 +197,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - **[Animesh Patra](https://github.com/developer-animesh7)** — Original Developer / Base Project Creator
 - **[AceTheUnfazed](https://github.com/acetheunfazed)** — Refiner / Maintainer of _GNT: iOS Refined_
 
-📧 Email: animeshpatra7908@gmail.com
-
 ## 📋 Changelog
 
 ### Version 3.0.0 (April 18, 2026)
@@ -214,10 +212,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - 📍 Optional GPS-based weather with rounded location caching
 - 🛡️ Security hardening for permissions
 - 📱 Better responsive design
-
-### Version 2.4.x
-
-- Previous features and improvements
 
 ## 🙏 Acknowledgments
 
