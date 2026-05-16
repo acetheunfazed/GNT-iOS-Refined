@@ -130,7 +130,7 @@ function resolveAssetUrl(path) {
 }
 
 const WEATHER_ICON_ASSETS = {
-  partlyCloudyNight: resolveAssetUrl('assets/icons/partly-cloud-night.png')
+  partlyCloudyNight: '/assets/icons/partly-cloud-night.png'
 };
 
 const DEFAULT_ENGINE_ICON_LIGHT = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666B74' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7.5'/%3E%3Cpath d='M20 20l-4.2-4.2'/%3E%3C/svg%3E";

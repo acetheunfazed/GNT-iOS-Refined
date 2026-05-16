@@ -2597,7 +2597,7 @@ body:has(.wallpaper.active) .user-name {
 }
 
 .weather-icon img {
-  width: 1em;
+  width: 1.2478em;
   height: 1em;
   display: block;
   object-fit: contain;
